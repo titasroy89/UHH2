@@ -590,8 +590,12 @@ MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
   if (sf_file.IsZombie()) {
     throw runtime_error("Scale factor file for electrons not found: " + sf_file_path);
   }
-
-  sf_hist_.reset((TH2*) sf_file.Get("EGamma_SF2D"));
+  if (weight_postfix=="Trigger"){
+	sf_hist_.reset((TH2*) sf_file.Get("abseta_pt_ratio"));
+   }
+  else{
+  	sf_hist_.reset((TH2*) sf_file.Get("EGamma_SF2D"));
+  }
   if (!sf_hist_.get()) {
     throw runtime_error("Electron scale factor histogram not found in file");
   }
