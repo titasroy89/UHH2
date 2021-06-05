@@ -40,6 +40,16 @@ inline double deltaPhi(const T & p1, const U & p2){
     return deltaphi;
 }
 
+template<typename T, typename U>
+inline double deltaPhiMET(const T & p1, const U & p2){
+    double deltaphimet = fabs(p1.phi() - p2->phi());
+    //if(deltaphimet > M_PI) deltaphimet = 2* M_PI - deltaphimet;
+    return deltaphimet;
+}
+
+
+
+
 /// distance in eta-phi space. works for any types which have 'eta' and 'phi' routines
 // T and U have to have a 'phi()' and an 'eta()' method, e.g. Particle, LorentzVector, etc.
 template<typename T, typename U>
