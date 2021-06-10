@@ -492,6 +492,11 @@ throw std::exception();
       useAbsEta_[be.params.jetFlavor] = false;
     }
   }
+
+  for (auto & p : otherSysTypeReaders_) {
+    p.second->load(c, jf, measurementType);
+  }
+
 }
 
 double BTagCalibrationReader::BTagCalibrationReaderImpl::eval(

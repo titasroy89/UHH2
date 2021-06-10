@@ -1,0 +1,32 @@
+imax 1 number of categories
+jmax * number of samples minus one
+kmax * number of nuisance parameters
+---------------------------------------------------
+shapes * * DeltaPhi_thad_lepton_muon_3cat.root $CHANNEL/$PROCESS/nominal $CHANNEL/$PROCESS/$SYSTEMATIC
+---------------------------------------------------
+bin SR0T
+observation -1
+---------------------------------------------------
+bin SR0T SR0T SR0T SR0T SR0T SR0T 
+process 0 1 2 3 4 5 
+process Ttbar dy qcd singletop vv wjets 
+rate -1 -1 -1 -1 -1 -1 
+---------------------------------------------------
+lumi lnN 1.025 1.025 1.025 1.025 1.025 1.025 
+---------------------------------------------------
+pileup shape 1 1 1 1 1 1 
+muHLT shape 1 1 1 1 1 1 
+muID shape 1 1 1 1 1 1 
+---------------------------------------------------
+ttbar_rate rateParam * ttbar 1
+ttbar_rate param 1.0 0.20
+wjets_rate rateParam * wjets 1
+wjets_rate param 1.0 0.25
+ST_rate rateParam * singletop 1
+ST_rate param 1.0 0.30
+other_rate rateParam * dy 1
+other_rate param 1.0 0.30
+other_rate rateParam * qcd 1
+other_rate param 1.0 0.30
+other_rate rateParam * vv 1
+other_rate param 1.0 0.30

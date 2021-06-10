@@ -3,7 +3,7 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Utils.h"
 #include "UHH2/common/include/Utils.h"
-
+#include <UHH2/common/include/TTbarGen.h>
 #include "Riostream.h"
 #include "TFile.h"
 #include "TH1F.h"
@@ -183,13 +183,13 @@ bool MCPileupReweight::process(Event &event){
     return false;
   }
 
-  if (sysType_ == "") {
-    event.weight *= weight;
-  } else if (sysType_ == "down") {
-    event.weight *= weight_down;
-  } else {
-    event.weight *= weight_up;
-  }
+//  if (sysType_ == "") {
+//    event.weight *= weight;
+//  } else if (sysType_ == "down") {
+//    event.weight *= weight_down;
+//  } else {
+//    event.weight *= weight_up;
+//  }
 
 
   return true;
@@ -267,7 +267,7 @@ bool MCScaleVariation::process(Event & event){
     else if(i_mu_r == 2 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(7);
     else if(i_mu_r == 2 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(8);
 
-    event.weight *= syst_weight/event.genInfo->originalXWGTUP();
+//    event.weight *= syst_weight/event.genInfo->originalXWGTUP();
   }
   catch(const std::runtime_error& error){
     std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
@@ -278,7 +278,210 @@ bool MCScaleVariation::process(Event & event){
 }
 
 
+MCToptaggSF::MCToptaggSF(uhh2::Context & ctx,
+  const std::string & sf_file_path,
+  const std::string & wp_name):
+  h_toptagSF_weight_      (ctx.declare_event_output<float>("weight_toptagSF_")),
+  h_toptagSF_up_weight_      (ctx.declare_event_output<float>("weight_toptagSF_up_")),
+  h_toptagSF_down_weight_      (ctx.declare_event_output<float>("weight_toptagSF_down_"))
+  {
+ 
+    h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("AK8PuppiTopTags");
+    auto dataset_type = ctx.get("dataset_type");
+    bool is_mc = dataset_type == "MC";
 
+    if (!is_mc) {
+      cout << "Warning: TopTagScaleFactor will not have an effect on "
+      <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+      return;
+    }
+    string cat_name_1 = "notmerged";
+    string cat_name_3 = "mergedTop";
+    string cat_name_2 = "semimerged";
+
+    string var_name = "nominal";
+
+/*    TFile sf_file(locate_file(sf_file_path).c_str());
+    if (sf_file.IsZombie()) {
+      throw runtime_error("Scale factor file for muons not found: " + sf_file_path);
+    }
+
+    sf_hist_.reset((TH1*) sf_file.Get("PUPPI_wp4/sf_notmerged_nominal"));
+    if (!sf_hist_.get()) {
+            throw runtime_error("Scale factor directory not found in file: ");     
+    }
+
+    sf_hist2_.reset((TH1*) sf_file.Get((wp_name+"/sf_"+cat_name_2+"_"+var_name).c_str()));
+    if (!sf_hist2_.get()) {
+            throw runtime_error("Scale factor directory not found in file: ");
+    }
+
+    sf_hist3_.reset((TH1*) sf_file.Get((wp_name+"/sf_"+cat_name_3+"_"+var_name).c_str()));
+    if (!sf_hist3_.get()) {
+            throw runtime_error("Scale factor directory not found in file: ");
+    }
+*/
+  }  
+
+  bool MCToptaggSF::process(uhh2::Event & event) {
+
+  vector<TopJet> TopTags = event.get(h_AK8TopTags);
+  event.set(h_toptagSF_weight_, 1.f);
+  event.set(h_toptagSF_up_weight_, 1.f);
+  event.set(h_toptagSF_down_weight_, 1.f);
+
+  float wgt = 1.;
+
+ //2018
+  float mergedTop_nominal_1 = 0.998216957;  float mergedTop_nominal_2 = 0.99866605;  float mergedTop_nominal_3 = 0.98657537;  float mergedTop_nominal_4 = 0.94760686;  float mergedTop_nominal_5 = 0.94760686;
+  float mergedTop_up_1 = 1.0100830;  float mergedTop_up_2 = 1.0841380;  float mergedTop_up_3 = 1.0128756;  float mergedTop_up_4 = 0.9817470;  float mergedTop_up_5 = 1.0247426;
+  float mergedTop_down_1 = 0.95425612;  float mergedTop_down_2 = 0.97232574;  float mergedTop_down_3 = 0.96027511;  float mergedTop_down_4 = 0.90903896;  float mergedTop_down_5 = 0.87047106;
+
+  float semimerged_nominal_1 = 1.0725051;  float semimerged_nominal_2 = 1.0841380;  float semimerged_nominal_3 = 0.98462087;  float semimerged_nominal_4 = 0.97770125;  float semimerged_nominal_5 = 0.97770125;
+  float semimerged_up_1 = 1.1335994;  float semimerged_up_2 = 1.1564199;  float semimerged_up_3 = 1.0751463;  float semimerged_up_4 = 1.0938857;  float semimerged_up_5 = 1.2100700;
+  float semimerged_down_1 = 1.0114108;  float semimerged_down_2 = 1.0118561;  float semimerged_down_3 = 0.89409548;  float semimerged_down_4 = 0.86151689;  float semimerged_down_5 = 0.74533248;
+
+  float notmerged_nominal_1 = 1.0812713;  float notmerged_nominal_2 = 1.1675383;  float notmerged_nominal_3 = 1.1273180;  float notmerged_nominal_4 = 1.0532738;  float notmerged_nominal_5 = 1.0532738;
+  float notmerged_up_1 = 1.1622297;  float notmerged_up_2 = 1.2429656;  float notmerged_up_3 = 1.2226826;  float notmerged_up_4 = 1.1534973;  float notmerged_up_5 = 1.2537208;
+  float notmerged_down_1 = 1.0003129;  float notmerged_down_2 = 1.0921111;  float notmerged_down_3 = 1.0319535;  float notmerged_down_4 = 0.95305032;  float notmerged_down_5 = 0.85282677;
+
+
+  //2017
+/*
+  float mergedTop_nominal_1 = 0.98674524;  float mergedTop_nominal_2 =  0.96778202;  float mergedTop_nominal_3 = 0.95883101;  float mergedTop_nominal_4 = 0.93953139;  float mergedTop_nominal_5 = 0.93953139;
+  float mergedTop_up_1 = 1.0236051;  float mergedTop_up_2 = 0.99399608;  float mergedTop_up_3 = 0.98822927;  float mergedTop_up_4 = 0.98521435;  float mergedTop_up_5 = 1.0308974;
+  float mergedTop_down_1 = 0.94988531;  float mergedTop_down_2 = 0.94156790;  float mergedTop_down_3 = 0.92943281;  float mergedTop_down_4 = 0.89384848;  float mergedTop_down_5 = 0.84816551;
+
+  float semimerged_nominal_1 = 1.0485591;  float semimerged_nominal_2 = 1.0315312;  float semimerged_nominal_3 = 0.96651822;  float semimerged_nominal_4 = 0.99758577;  float semimerged_nominal_5 = 0.99758577;
+  float semimerged_up_1 = 1.1176342;  float semimerged_up_2 = 1.1203716;  float semimerged_up_3 = 1.0671948;  float semimerged_up_4 = 1.1342028;  float semimerged_up_5 = 1.2708199;
+  float semimerged_down_1 = 0.97948390;  float semimerged_down_2 = 0.94269073;  float semimerged_down_3 = 0.86584157;  float semimerged_down_4 = 0.86096877;  float semimerged_down_5 = 0.72435170;
+
+  float notmerged_nominal_1 = 1.1613269;  float notmerged_nominal_2 = 1.0389098;  float notmerged_nominal_3 = 1.0157162;  float notmerged_nominal_4 = 1.0329711;  float notmerged_nominal_5 = 1.0329711;
+  float notmerged_up_1 = 1.2725911;  float notmerged_up_2 = 1.1417377;  float notmerged_up_3 = 1.1264046;  float notmerged_up_4 = 1.1556237;  float notmerged_up_5 = 1.2782762;
+  float notmerged_down_1 = 1.0500627;  float notmerged_down_2 = 0.93608177;  float notmerged_down_3 = 0.90502769;  float notmerged_down_4 = 0.91031861;  float notmerged_down_5 = 0.78766608;
+
+
+  //2016
+
+  float mergedTop_nominal_1 = 0.98623419;  float mergedTop_nominal_2 = 0.96503079;  float mergedTop_nominal_3 = 1.0029691;  float mergedTop_nominal_4 = 1.0236728;  float mergedTop_nominal_5 = 1.0236728;
+  float mergedTop_up_1 = 1.0226288;  float mergedTop_up_2 = 0.99043179;  float mergedTop_up_3 = 1.0344294;  float mergedTop_up_4 = 1.0716326;  float mergedTop_up_5 = 1.1195925;
+  float mergedTop_down_1 = 0.94983965;  float mergedTop_down_2 = 0.93962979;  float mergedTop_down_3 = 0.97150880;  float mergedTop_down_4 = 0.97571295;  float mergedTop_down_5 = 0.92775309;
+
+  float semimerged_nominal_1 = 0.95853740;  float semimerged_nominal_2 = 0.98230469;  float semimerged_nominal_3 = 0.98299700;  float semimerged_nominal_4 = 1.0720320;  float semimerged_nominal_5 = 1.0720320;
+  float semimerged_up_1 = 1.0212306;  float semimerged_up_2 = 1.0599980;  float semimerged_up_3 = 1.0708913;  float semimerged_up_4 = 1.1870658;  float semimerged_up_5 = 1.3020997;
+  float semimerged_down_1 = 0.89584416;  float semimerged_down_2 = 0.90461129;  float semimerged_down_3 = 0.89510280;  float semimerged_down_4 = 0.95699805;  float semimerged_down_5 = 0.84196419;
+
+  float notmerged_nominal_1 = 1.1884536;  float notmerged_nominal_2 = 1.1685629;  float notmerged_nominal_3 = 1.0916884;  float notmerged_nominal_4 = 1.0678115;  float notmerged_nominal_5 = 1.0678115;
+  float notmerged_up_1 = 1.2784989;  float notmerged_up_2 = 1.2864507;  float notmerged_up_3 = 1.2179689;  float notmerged_up_4 = 1.1900523;  float notmerged_up_5 = 1.3122932;
+  float notmerged_down_1 = 1.0984082;  float notmerged_down_2 = 1.0506749;  float notmerged_down_3 = 0.96540791;  float notmerged_down_4 = 0.94557053;  float notmerged_down_5 = 0.82332963;
+*/
+  ///////////////////////////////////
+
+  float wgt_up = 1.;
+  float wgt_down = 1.;
+
+  if (event.isRealData) return true;
+
+  assert(event.genparticles);
+
+  //Loop over genparticles
+  for(const auto & gp : *event.genparticles){
+    //Get tops
+    if(fabs(gp.pdgId()) == 6){
+
+      //Get b and W
+      auto b = gp.daughter(event.genparticles,1);
+      auto W = gp.daughter(event.genparticles,2);
+      if(fabs(W->pdgId()) == 5 && fabs(b->pdgId()) == 24){
+        b = gp.daughter(event.genparticles,2);
+        W = gp.daughter(event.genparticles,1);
+      }
+
+      if(abs(W->pdgId()) != 24) {
+        for(unsigned int j = 0; j < event.genparticles->size(); ++j) {
+          const GenParticle & genp = event.genparticles->at(j);
+          auto m1 = genp.mother(event.genparticles, 1);
+          auto m2 = genp.mother(event.genparticles, 2);
+          bool has_top_mother = ((m1 && m1->index() == gp.index()) || (m2 && m2->index() == gp.index()));
+          if(has_top_mother && (abs(genp.pdgId()) == 24)) {
+            W = &genp;
+            break;
+          }
+        }
+      }
+      if(abs(b->pdgId()) != 5 && abs(b->pdgId()) != 3 && abs(b->pdgId()) != 1) {
+        for(unsigned int j = 0; j < event.genparticles->size(); ++j) {
+          const GenParticle & genp = event.genparticles->at(j);
+          auto m1 = genp.mother(event.genparticles, 1);
+          auto m2 = genp.mother(event.genparticles, 2);
+          bool has_top_mother = ((m1 && m1->index() == gp.index()) || (m2 && m2->index() == gp.index()));
+          if(has_top_mother && (abs(genp.pdgId()) == 5 || abs(genp.pdgId()) == 3 || abs(genp.pdgId()) == 1)) {
+            b = &genp;
+            break;
+          }
+        }
+      }
+      if(!((fabs(b->pdgId()) == 5 || fabs(b->pdgId()) == 3 || fabs(b->pdgId()) == 1) && fabs(W->pdgId()) == 24)) return false;
+
+      //To identify decay type, check ID of W daughters
+      auto Wd1 = W->daughter(event.genparticles,1);
+      auto Wd2 = W->daughter(event.genparticles,2);
+
+      //hadronic
+      if(fabs(Wd1->pdgId()) < 7 && fabs(Wd2->pdgId()) < 7){
+
+        for(const TopJet & toptag : TopTags){
+ 
+          float pt_probeJet_ = toptag.pt();      
+
+          int Nmatch = 0;
+          if(deltaR(*b, toptag) < 0.8) ++Nmatch;
+          if(deltaR(*Wd1, toptag) < 0.8) ++Nmatch;
+          if(deltaR(*Wd2, toptag) < 0.8) ++Nmatch;
+    
+          int bin = 1;
+
+          if(pt_probeJet_ < 400) bin = 1;
+          if(pt_probeJet_ >= 400 && pt_probeJet_ < 480) bin = 2;
+          if(pt_probeJet_ >= 480 && pt_probeJet_ < 600) bin = 3;
+          if(pt_probeJet_ >= 600 && pt_probeJet_ < 1000) bin = 4;
+          if(pt_probeJet_ >= 1000) bin = 5;
+
+
+          if (Nmatch < 2) {
+                if(bin == 1){ wgt *= notmerged_nominal_1; wgt_up *= notmerged_up_1; wgt_down *= notmerged_down_1; }
+                if(bin == 2){ wgt *= notmerged_nominal_2; wgt_up *= notmerged_up_2; wgt_down *= notmerged_down_2; }
+                if(bin == 3){ wgt *= notmerged_nominal_3; wgt_up *= notmerged_up_3; wgt_down *= notmerged_down_3; }
+                if(bin == 4){ wgt *= notmerged_nominal_4; wgt_up *= notmerged_up_4; wgt_down *= notmerged_down_4; }
+                if(bin == 5){ wgt *= notmerged_nominal_5; wgt_up *= notmerged_up_5; wgt_down *= notmerged_down_5; }
+          }
+          if (Nmatch == 2) {
+                if(bin == 1){ wgt *= semimerged_nominal_1; wgt_up *= semimerged_up_1; wgt_down *= semimerged_down_1; }
+                if(bin == 2){ wgt *= semimerged_nominal_2; wgt_up *= semimerged_up_2; wgt_down *= semimerged_down_2; }
+                if(bin == 3){ wgt *= semimerged_nominal_3; wgt_up *= semimerged_up_3; wgt_down *= semimerged_down_3; }
+                if(bin == 4){ wgt *= semimerged_nominal_4; wgt_up *= semimerged_up_4; wgt_down *= semimerged_down_4; }
+                if(bin == 5){ wgt *= semimerged_nominal_5; wgt_up *= semimerged_up_5; wgt_down *= semimerged_down_5; }
+          }
+          if (Nmatch == 3) {
+                if(bin == 1){ wgt *= mergedTop_nominal_1; wgt_up *= mergedTop_up_1; wgt_down *= mergedTop_down_1; }
+                if(bin == 2){ wgt *= mergedTop_nominal_2; wgt_up *= mergedTop_up_2; wgt_down *= mergedTop_down_2; }
+                if(bin == 3){ wgt *= mergedTop_nominal_3; wgt_up *= mergedTop_up_3; wgt_down *= mergedTop_down_3; }
+                if(bin == 4){ wgt *= mergedTop_nominal_4; wgt_up *= mergedTop_up_4; wgt_down *= mergedTop_down_4; }
+                if(bin == 5){ wgt *= mergedTop_nominal_5; wgt_up *= mergedTop_up_5; wgt_down *= mergedTop_down_5; }
+          }
+
+       }
+      }
+   }  
+ }
+
+
+ event.set(h_toptagSF_weight_,wgt);
+ event.set(h_toptagSF_up_weight_,wgt_up);
+ event.set(h_toptagSF_down_weight_,wgt_down);
+
+ return true;
+ } 
 
 MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   const std::string & sf_file_path,
@@ -294,6 +497,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   h_muon_weight_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_down")),
   sys_error_factor_(sys_error_percantage/100.), etaYaxis_(etaYaxis)
   {
+
     auto dataset_type = ctx.get("dataset_type");
     bool is_mc = dataset_type == "MC";
     if (!is_mc) {
@@ -301,7 +505,6 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
       <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
       return;
     }
-
 
     TFile sf_file(locate_file(sf_file_path).c_str());
     if (sf_file.IsZombie()) {
@@ -399,13 +602,13 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
     event.set(h_muon_weight_up_,    weight_up);
     event.set(h_muon_weight_down_,  weight_down);
 
-    if (sys_direction_ == 1) {
-      event.weight *= weight_up;
-    } else if (sys_direction_ == -1) {
-      event.weight *= weight_down;
-    } else {
-      event.weight *= weight;
-    }
+//    if (sys_direction_ == 1) {
+//      event.weight *= weight_up;
+//    } else if (sys_direction_ == -1) {
+//      event.weight *= weight_down;
+//    } else {
+//      event.weight *= weight;
+//    }
 
     return true;
   }
@@ -468,13 +671,13 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
     event.set(h_muon_weight_up_,    weight_up);
     event.set(h_muon_weight_down_,  weight_down);
 
-    if (sys_direction_ == 1) {
-      event.weight *= weight_up;
-    } else if (sys_direction_ == -1) {
-      event.weight *= weight_down;
-    } else {
-      event.weight *= weight;
-    }
+//    if (sys_direction_ == 1) {
+//      event.weight *= weight_up;
+//    } else if (sys_direction_ == -1) {
+//      event.weight *= weight_down;
+//    } else {
+//      event.weight *= weight;
+//    }
 
     return true;
   }
@@ -567,13 +770,13 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
       event.set(h_muontrk_weight_up_,    weight_up);
       event.set(h_muontrk_weight_down_,  weight_down);
 
-      if (sys_direction_ == 1) {
-        event.weight *= weight_up;
-      } else if (sys_direction_ == -1) {
-        event.weight *= weight_down;
-      } else {
-        event.weight *= weight;
-      }
+//      if (sys_direction_ == 1) {
+//        event.weight *= weight_up;
+//      } else if (sys_direction_ == -1) {
+//        event.weight *= weight_down;
+//      } else {
+//        event.weight *= weight;
+//      }
 
       return true;
     }
@@ -632,7 +835,6 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
           event.set(h_elec_weight_down_,  1.);
           return true;
         }
-
         const auto & elecs = event.get(h_elecs_);
         float weight = 1., weight_up = 1., weight_down = 1.;
         for (const auto & el : elecs) {
@@ -675,15 +877,129 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
         event.set(h_elec_weight_up_,    weight_up);
         event.set(h_elec_weight_down_,  weight_down);
 
-        if (sys_direction_ == 1) {
-          event.weight *= weight_up;
-        } else if (sys_direction_ == -1) {
-          event.weight *= weight_down;
-        } else {
-          event.weight *= weight;
-        }
+//        if (sys_direction_ == 1) {
+//          event.weight *= weight_up;
+//        } else if (sys_direction_ == -1) {
+//          event.weight *= weight_down;
+//        } else {
+//          event.weight *= weight;
+//        }
 
         return true;
+      }
+
+
+    MCNjetsHTScaleFactor::MCNjetsHTScaleFactor(uhh2::Context & ctx,
+      const std::string & sf_file_path,
+      float sys_error_percantage,
+      const std::string & weight_postfix,
+      const std::string & sys_uncert,
+      const std::string & elecs_handle_name,
+      const std::string & sf_name):
+      h_elecs_            (ctx.get_handle<std::vector<Electron>>(elecs_handle_name)),
+      h_HT_weight_	  (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix)),
+      h_HT_weight_up_   (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_up")),
+      h_HT_weight_down_ (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_down")),
+      sys_error_factor_(sys_error_percantage/100.)
+      {
+       	auto dataset_type = ctx.get("dataset_type");
+        bool is_mc = dataset_type == "MC";
+        if (!is_mc) {
+          cout << "Warning: MCElecScaleFactor will not have an effect on "
+          <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+          return;
+        }
+
+	TFile sf_file(locate_file(sf_file_path).c_str());
+        if (sf_file.IsZombie()) {
+          throw runtime_error("Scale factor file for electrons not found: " + sf_file_path);
+        }
+
+	sf_hist_boosted_.reset((TH2*) sf_file.Get("D_boosted"));
+        sf_hist_semiresolved_.reset((TH2*) sf_file.Get("D_semiresolved"));
+        sf_hist_resolved_.reset((TH2*) sf_file.Get("D_resolved"));
+
+        if (!sf_hist_boosted_.get()) {
+          throw runtime_error("HT scale factor histogram not found in file");
+        }
+        if (!sf_hist_semiresolved_.get()) {
+          throw runtime_error("HT scale factor histogram not found in file");
+        }
+        if (!sf_hist_resolved_.get()) {
+          throw runtime_error("HT scale factor histogram not found in file");
+        }
+
+	sf_hist_boosted_->SetDirectory(0);
+        sf_hist_semiresolved_->SetDirectory(0);
+        sf_hist_resolved_->SetDirectory(0);        
+
+        sys_direction_ = 0;
+        if (sys_uncert == "up") {
+          sys_direction_ = 1;
+        } else if (sys_uncert == "down") {
+          sys_direction_ = -1;
+        }
+      }
+
+      bool MCNjetsHTScaleFactor::process(uhh2::Event & event) {
+
+        if (!sf_hist_boosted_) {
+          event.set(h_HT_weight_,	  1.);
+          event.set(h_HT_weight_up_,    1.);
+          event.set(h_HT_weight_down_,  1.);
+          return true;
+        }
+	const auto & elecs = event.get(h_elecs_);
+        vector<Jet>* Ak4jets = event.jets;
+        int NAk4jets = Ak4jets->size();
+        double HT = event.met->pt();
+        float weight = 1., weight_up = 1., weight_down = 1.;
+
+        
+        if (0 < HT && 1200 > HT){
+            bool out_of_range = false;
+
+            if(1 >= NAk4jets) {
+              NAk4jets=2;
+              out_of_range = true;
+            }
+            if(12 <= NAk4jets) {
+              NAk4jets=12;
+              out_of_range = true;
+            }
+            int bin	  = sf_hist_boosted_->FindFixBin(NAk4jets, HT);
+            float w	  = sf_hist_boosted_->GetBinContent(bin);
+            float err     = sf_hist_boosted_->GetBinError(bin);
+
+            if (w==1 and err==0) {
+              if (bin==1) bin +=1;
+              else bin -= 1;
+              w   = sf_hist_boosted_->GetBinContent(bin);
+              err = sf_hist_boosted_->GetBinError(bin);
+            }
+
+            float err_tot = sqrt(err*err + pow(w*sys_error_factor_, 2));
+            if(out_of_range) err_tot*=2;
+
+            weight	*= w;
+            weight_up   *= w + err_tot;
+            weight_down *= w - err_tot;
+        }
+
+
+	event.set(h_HT_weight_,	weight);
+        event.set(h_HT_weight_up_,    weight_up);
+        event.set(h_HT_weight_down_,  weight_down);
+
+//        if (sys_direction_ == 1) {
+//          event.weight *= weight_up;
+//        } else if (sys_direction_ == -1) {
+//          event.weight *= weight_down;
+//        } else {
+//          event.weight *= weight;
+//        }
+
+	return true;
       }
 
 
@@ -971,7 +1287,8 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
                 return;
               }
 
-              BTagCalibration calibration("tagger", ctx.get(xml_calib_name)); // CHECK: the first std::string argument here should not be relevant
+
+             BTagCalibration calibration("tagger", ctx.get(xml_calib_name)); // CHECK: the first std::string argument here should not be relevant
               reader.reset(new BTagCalibrationReader(BTagEntry::OP_RESHAPING,"central",
               {"up_jes","down_jes",
               "up_lf","down_lf",
@@ -1012,6 +1329,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
                 event.set(h_weight_btagdisc_cferr2down,1.);
                 return true;
               }
+
 
               float weight_central = 1.0;
               float weight_jesup = 1.0;
@@ -1121,8 +1439,8 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
               else if (sysType_ == "cferr1down") {event.weight *= weight_cferr1down;}
               else if (sysType_ == "cferr2up") {event.weight *= weight_cferr2up;}
               else if (sysType_ == "cferr2down") {event.weight *= weight_cferr2down;}
-              else {event.weight *= weight_central;}
-
+//              else {event.weight *= weight_central;}
+              
               return true;
             }
 

@@ -4,7 +4,7 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/BTagCalibrationStandalone.h"
-
+#include <UHH2/common/include/TTbarGen.h>
 #include "TH2.h"
 
 /** \brief Set the event weight according to the sample lumi and a target lumi
@@ -130,6 +130,25 @@ private:
   bool etaYaxis_;
 };
 
+
+class  MCToptaggSF: public uhh2::AnalysisModule {
+public:
+  explicit  MCToptaggSF(uhh2::Context & ctx,
+                             const std::string & sf_file_path = "",
+                             const std::string & wp_name="");
+
+  virtual bool process(uhh2::Event & event) override;
+
+private:
+  uhh2::Event::Handle<std::vector<TopJet>> h_AK8TopTags;
+//  std::unique_ptr<TH1> sf_hist_;
+//  std::unique_ptr<TH1> sf_hist2_;
+//  std::unique_ptr<TH1> sf_hist3_;
+  uhh2::Event::Handle<float> h_toptagSF_weight_;
+  uhh2::Event::Handle<float> h_toptagSF_up_weight_;
+  uhh2::Event::Handle<float> h_toptagSF_down_weight_;
+};
+
 // Muon tracking efficiency
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffsRun2
 class MCMuonTrkScaleFactor: public uhh2::AnalysisModule {
@@ -199,6 +218,32 @@ private:
   float eta_min_, eta_max_, pt_min_, pt_max_;
   int sys_direction_;
 };
+
+class MCNjetsHTScaleFactor: public uhh2::AnalysisModule {
+public:
+  explicit MCNjetsHTScaleFactor(uhh2::Context & ctx,
+                             const std::string & sf_file_path,
+                             float sys_error_percantage,
+                             const std::string & weight_postfix="",
+                             const std::string & sys_uncert="nominal",
+                             const std::string & elecs_handle_name="electrons",
+                             const std::string & sf_name="EGamma_SF2D");
+
+  virtual bool process(uhh2::Event & event) override;
+
+private:
+  uhh2::Event::Handle<std::vector<Electron>> h_elecs_;
+  std::unique_ptr<TH2> sf_hist_boosted_;
+  std::unique_ptr<TH2> sf_hist_resolved_;
+  std::unique_ptr<TH2> sf_hist_semiresolved_;
+  uhh2::Event::Handle<float> h_HT_weight_;
+  uhh2::Event::Handle<float> h_HT_weight_up_;
+  uhh2::Event::Handle<float> h_HT_weight_down_;
+  float sys_error_factor_;
+  float eta_min_, eta_max_, pt_min_, pt_max_;
+  int sys_direction_;
+};
+
 
 
 class BTagCalibrationReader;  // forward declaration
@@ -279,6 +324,7 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
  * individual contributions to the JES variation, e.g. 'jesPileUpPtBB', 'jesSinglePionHCAL' ...
  * For now, we ignore these individual contributions and just use the combined total JES variation.
  */
+
 class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
  public:
   explicit MCBTagDiscriminantReweighting(uhh2::Context & ctx,
@@ -316,8 +362,8 @@ class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
   uhh2::Event::Handle<float> h_weight_btagdisc_cferr2up;
   uhh2::Event::Handle<float> h_weight_btagdisc_cferr2down;
   // TODO: Add a bunch of handles for splitted JES uncertainties here later if needed. Splitted JES uncertainties are not available for CSVv2 but for DeepJet and DeepCSV.
-};
-
+   
+  };
 
 /** \brief Vary Tau efficiency
  *

@@ -1,0 +1,248 @@
+#include <algorithm>
+#include <iterator>
+#include <TROOT.h>
+#include <TH2.h>
+#include <TStyle.h>
+#include <TCanvas.h>
+#include <TLatex.h>
+#include "TCanvas.h"
+#include "RooPlot.h"
+#include "TTree.h"
+#include "TH1D.h"
+#include "TH1F.h"
+#include "THStack.h"
+#include "TRandom.h"
+#include "TUnfoldDensity.h"
+#include "TGraph.h"
+#include "TGraphErrors.h"
+#include "TFrame.h"
+#include "TPaveLabel.h"
+#include "TPad.h"
+#include "TLegend.h"
+#include "sigma.h"
+#include "mean.h"
+#include "TRandom3.h"
+
+void unfolding_data()
+{
+
+    gStyle->SetOptStat(0);
+    TChain *chreco_data = new TChain("AnalysisTree","");
+    chreco_data->Add("/nfs/dust/cms/user/hugobg/Zprime_102X/analysis_output/2016/muon/workdir_Zprime_Analysis_2016_muon_ttag_btag/*DATA.root/AnalysisTree");
+    TTree *treereco_data = (TTree*) chreco_data;
+
+    TChain *chreco_ttbar = new TChain("AnalysisTree","");
+    chreco_ttbar->Add("/nfs/dust/cms/user/hugobg/Zprime_102X/analysis_output/2016/muon/workdir_Zprime_Analysis_2016_muon_ttag_btag/*TTbar.root/AnalysisTree");
+    TTree *treereco_ttbar = (TTree*) chreco_ttbar;
+
+    TChain *chreco_wjets = new TChain("AnalysisTree","");
+    chreco_wjets->Add("/nfs/dust/cms/user/hugobg/Zprime_102X/analysis_output/2016/muon/workdir_Zprime_Analysis_2016_muon_ttag_btag/*WJets.root/AnalysisTree");
+    TTree *treereco_wjets = (TTree*) chreco_wjets;
+
+    TChain *chreco_ST = new TChain("AnalysisTree","");
+    chreco_ST->Add("/nfs/dust/cms/user/hugobg/Zprime_102X/analysis_output/2016/muon/workdir_Zprime_Analysis_2016_muon_ttag_btag/*ST.root/AnalysisTree");
+    TTree *treereco_ST = (TTree*) chreco_ST;
+
+    TChain *chreco_DY = new TChain("AnalysisTree","");
+    chreco_DY->Add("/nfs/dust/cms/user/hugobg/Zprime_102X/analysis_output/2016/muon/workdir_Zprime_Analysis_2016_muon_ttag_btag/*DYJets.root/AnalysisTree");
+    TTree *treereco_DY = (TTree*) chreco_DY;
+
+    TChain *chreco_QCD = new TChain("AnalysisTree","");
+    chreco_QCD->Add("/nfs/dust/cms/user/hugobg/Zprime_102X/analysis_output/2016/muon/workdir_Zprime_Analysis_2016_muon_ttag_btag/*QCD.root/AnalysisTree");
+    TTree *treereco_QCD = (TTree*) chreco_QCD;
+
+//array for variable 
+    Float_t bins_gen[] = {-2.,-1.5,-1.,-0.5,0.,0.5,1.,1.5,2.};
+    Float_t new_rec[] = {-2.,-1.5,-1.25,-1.,-0.75,-0.5,-0.25,0.,0.25,0.5,0.75,1.,1.25,1.5,2.};
+
+    Int_t  newrec = sizeof(new_rec)/sizeof(Float_t) - 1;
+    Int_t  binnum_gen = sizeof(bins_gen)/sizeof(Float_t) - 1;
+
+//-----Bacgrounds------??
+    TH1F *Data = new TH1F("Data","",newrec,new_rec);
+    TH1F *TTbar = new TH1F("TTbar","",newrec,new_rec);
+    TH1F *WJets = new TH1F("WJets","",newrec,new_rec);
+    TH1F *ST = new TH1F("ST","",newrec,new_rec);
+    TH1F *DY = new TH1F("DY","",newrec,new_rec);
+    TH1F *QCD = new TH1F("QCD","",newrec,new_rec);
+
+//-------Syst----------??
+
+    TH1F *ttbar_pu_up = new TH1F("ttbar_pu_up","",newrec,new_rec);
+    TH1F *ttbar_pu_down  = new TH1F("ttbar_pu_down","",newrec,new_rec);
+    TH1F *ttbar_cferr1_up = new TH1F("ttbar_cferr1_up","",newrec,new_rec);
+    TH1F *ttbar_cferr1_down = new TH1F("ttbar_cferr1_down","",newrec,new_rec);
+    TH1F *ttbar_cferr2_up = new TH1F("ttbar_cferr2_up","",newrec,new_rec);
+    TH1F *ttbar_cferr2_down  = new TH1F("ttbar_cferr2_down","",newrec,new_rec);
+    TH1F *ttbar_hf_up = new TH1F("ttbar_hf_up","",newrec,new_rec);
+    TH1F *ttbar_hf_down  = new TH1F("ttbar_hf_down","",newrec,new_rec);
+    TH1F *ttbar_hfstats1_up = new TH1F("ttbar_hfstats1_up","",newrec,new_rec);
+    TH1F *ttbar_hfstats1_down  = new TH1F("ttbar_hfstats1_down","",newrec,new_rec);
+    TH1F *ttbar_hfstats2_up = new TH1F("ttbar_hfstats2_up","",newrec,new_rec);
+    TH1F *ttbar_hfstats2_down  = new TH1F("ttbar_hfstats2_down","",newrec,new_rec);
+    TH1F *ttbar_jes_up = new TH1F("ttbar_jes_up","",newrec,new_rec);
+    TH1F *ttbar_jes_down  = new TH1F("ttbar_jes_down","",newrec,new_rec);
+    TH1F *ttbar_lf_up = new TH1F("ttbar_lf_up","",newrec,new_rec);
+    TH1F *ttbar_lf_down  = new TH1F("ttbar_lf_down","",newrec,new_rec);
+    TH1F *ttbar_lfstats1_up = new TH1F("ttbar_lfstats1_up","",newrec,new_rec);
+    TH1F *ttbar_lfstats1_down  = new TH1F("ttbar_lfstats1_down","",newrec,new_rec);
+    TH1F *ttbar_lfstats2_up = new TH1F("ttbar_lfstats2_up","",newrec,new_rec);
+    TH1F *ttbar_lfstats2_down  = new TH1F("ttbar_lfstats2_down","",newrec,new_rec);
+
+    TH2F *Migration_Matrix_pu = new TH2F("Migration_Matrix_pu","",newrec,new_rec,binnum_gen,bins_gen);
+    TH2F *Migration_Matrix_cferr1 = new TH2F("Migration_Matrix_cferr1","",newrec,new_rec,binnum_gen,bins_gen);
+    TH2F *Migration_Matrix_cferr2 = new TH2F("Migration_Matrix_cferr2","",newrec,new_rec,binnum_gen,bins_gen);
+    TH2F *Migration_Matrix_hf = new TH2F("Migration_Matrix_hf","",newrec,new_rec,binnum_gen,bins_gen);
+    TH2F *Migration_Matrix_hfstats1 = new TH2F("Migration_Matrix_hfstats1","",newrec,new_rec,binnum_gen,bins_gen);
+    TH2F *Migration_Matrix_hfstats2 = new TH2F("Migration_Matrix_hfstats2","",newrec,new_rec,binnum_gen,bins_gen);
+    TH2F *Migration_Matrix_jes = new TH2F("Migration_Matrix_jes","",newrec,new_rec,binnum_gen,bins_gen);
+    TH2F *Migration_Matrix_lf = new TH2F("Migration_Matrix_lf","",newrec,new_rec,binnum_gen,bins_gen);
+    TH2F *Migration_Matrix_lfstats1 = new TH2F("Migration_Matrix_lfstats1","",newrec,new_rec,binnum_gen,bins_gen);
+    TH2F *Migration_Matrix_lfstats2 = new TH2F("Migration_Matrix_lfstats2","",newrec,new_rec,binnum_gen,bins_gen);
+
+
+//--------Unfold----------??
+    TH2F *Migration_Matrix = new TH2F("Migration_Matrix","",newrec,new_rec,binnum_gen,bins_gen);
+    TH1F *DeltaY_gen = new TH1F("DeltaY_gen","",binnum_gen,bins_gen);
+
+
+
+//-------gen_variable------??
+//
+    string variable = ""
+
+    if(var_name == "rap_diff") string variable = "TMath::Abs(0.5*TMath::Log((GenParticles.m_energy[2] + GenParticles.m_pt[2]*TMath::SinH(GenParticles.m_eta[2]))/(GenParticles.m_energy[2] - GenParticles.m_pt[2]*TMath::SinH(GenParticles.m_eta[2])))) - TMath::Abs(0.5*TMath::Log((GenParticles.m_energy[3] + GenParticles.m_pt[3]*TMath::SinH(GenParticles.m_eta[3]))/(GenParticles.m_energy[3] - GenParticles.m_pt[3]*TMath::SinH(GenParticles.m_eta[3]))))";
+
+//------Filling_bkgs---------??
+    treereco_data->Project("Data",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)");
+    treereco_ttbar->Project("TTbar",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_central*0.75");
+    treereco_wjets->Project("WJets",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_central");
+    treereco_ST->Project("ST",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_central");
+    treereco_DY->Project("DY",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_central");
+    treereco_QCD->Project("QCD",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_central");
+
+
+// ------ filling_syst----------??
+
+ 
+	treereco_ttbar->Project("ttbar_pu_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu_up*weight_btagdisc_central*0.75");
+	treereco_ttbar->Project("ttbar_pu_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu_down*weight_btagdisc_central*0.75");
+	treereco_ttbar->Project("ttbar_cferr1_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_cferr1up*0.75");
+	treereco_ttbar->Project("ttbar_cferr1_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_cferr1down*0.75");
+	treereco_ttbar->Project("ttbar_cferr2_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_cferr2up*0.75"); 
+	treereco_ttbar->Project("ttbar_cferr2_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_cferr2down*0.75"); 
+	treereco_ttbar->Project("ttbar_hf_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_hfup*0.75");
+	treereco_ttbar->Project("ttbar_hf_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_hfdown*0.75"); 
+	treereco_ttbar->Project("ttbar_hfstats1_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_hfstats1up*0.75");
+	treereco_ttbar->Project("ttbar_hfstats1_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_hfstats1down*0.75"); 
+	treereco_ttbar->Project("ttbar_hfstats2_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_hfstats2up*0.75"); 
+	treereco_ttbar->Project("ttbar_hfstats2_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_hfstats2down*0.75"); 
+	treereco_ttbar->Project("ttbar_jes_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_jesup*0.75");
+	treereco_ttbar->Project("ttbar_jes_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_jesdown*0.75"); 
+	treereco_ttbar->Project("ttbar_lf_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_lfup*0.75");
+	treereco_ttbar->Project("ttbar_lf_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_lfdown*0.75"); 
+	treereco_ttbar->Project("ttbar_lfstats1_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_lfstats1up*0.75");
+	treereco_ttbar->Project("ttbar_lfstats1_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_lfstats1down*0.75");
+	treereco_ttbar->Project("ttbar_lfstats2_up",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_lfstats2up*0.75"); 
+	treereco_ttbar->Project("ttbar_lfstats2_down",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)","DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_lfstats2down*0.75");
+ 
+
+
+  
+    treereco_ttbar->Project("Migration_Matrix",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_central*0.75");
+    treereco_ttbar->Project("DeltaY_gen",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str()),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_central*0.75"); 
+
+ 
+    treereco_ttbar->Project("Migration_Matrix_pu",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu_up*weight_btagdisc_central*0.75");
+    treereco_ttbar->Project("Migration_Matrix_cferr1",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu_up*weight_btagdisc_cferr1up*0.75");
+    treereco_ttbar->Project("Migration_Matrix_cferr2",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_cferr2up*0.75");
+    treereco_ttbar->Project("Migration_Matrix_hf",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_hfup*0.75"); 
+    treereco_ttbar->Project("Migration_Matrix_hfstats1",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_hfstats1up*0.75");
+    treereco_ttbar->Project("Migration_Matrix_hfstats2",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_hfstats2up*0.75");
+    treereco_ttbar->Project("Migration_Matrix_jes",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_jesup*0.75");
+    treereco_ttbar->Project("Migration_Matrix_lf",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_lfup*0.75");
+    treereco_ttbar->Project("Migration_Matrix_lfstats2",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_lfstats1up*0.75");
+    treereco_ttbar->Project("Migration_Matrix_lfstats1",Form("%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s):%s < -2. ? TMath::Max(-1.99,%s): (%s > 2. ? TMath::Min(1.99,%s) : %s)",variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),variable.c_str(),"DeltaY","DeltaY","DeltaY","DeltaY","DeltaY"),"(ttagN == 0 && btagN==1)*weight*weight_pu*weight_btagdisc_lfstats2up*0.75");
+  
+//    THStack *hs = new THStack("hs",Form(";%s;",variable.c_str()));
+    THStack *hs = new THStack("hs",";DeltaY;");
+    WJets->SetFillColor(kBlue);
+    hs->Add(WJets);
+    TTbar->SetFillColor(kRed);
+    hs->Add(TTbar);
+    DY->SetFillColor(kGreen);
+    hs->Add(DY);
+    QCD->SetFillColor(kYellow);
+    hs->Add(QCD);
+    ST->SetFillColor(kMagenta);
+    hs->Add(ST);    
+
+    Data->SetMarkerStyle(8);
+
+    auto legend = new TLegend(0.5,0.5,0.8,0.8);
+    legend->SetHeader("2016","C");
+    legend->AddEntry(Data,"Data","f");
+    legend->AddEntry(WJets,"Wjets","f");
+    legend->AddEntry(TTbar,"ttbar","f");
+    legend->AddEntry(DY,"DY","f");
+    legend->AddEntry(ST,"ST","f");
+    legend->AddEntry(QCD,"QCD","f");
+
+    legend->SetBorderSize(0);
+
+    TCanvas *cc = new TCanvas("cc","cc",10,10,1000,800);
+    cc->cd();
+    hs->Draw();
+    Data->Draw("epsame"); 
+    legend->Draw("same"); 
+    cc->Print("Delta.pdf");
+
+    TFile out("Input_undfolding_data_.root","recreate");
+    Data->Write();
+    TTbar->Write();
+    WJets->Write(); 
+    ST->Write(); 
+    DY->Write();
+    QCD->Write();
+    Migration_Matrix->Write();    
+    DeltaY_gen->Write();
+
+    ttbar_pu_down->Write();
+    ttbar_pu_up->Write();
+    ttbar_cferr1_up->Write();
+    ttbar_cferr1_down->Write();
+    ttbar_cferr2_up->Write();
+    ttbar_cferr2_down->Write();
+    ttbar_hf_up->Write();
+    ttbar_hf_down->Write();
+    ttbar_hfstats1_down->Write();
+    ttbar_hfstats1_up->Write();
+    ttbar_hfstats2_up->Write();
+    ttbar_hfstats2_down->Write();
+    ttbar_jes_up->Write();
+    ttbar_jes_down->Write();
+    ttbar_lf_up->Write();
+    ttbar_lf_down->Write();
+    ttbar_lfstats1_up->Write();
+    ttbar_lfstats1_down->Write();
+    ttbar_lfstats2_up->Write();
+    ttbar_lfstats2_down->Write();
+
+    Migration_Matrix_pu->Write();
+    Migration_Matrix_cferr1->Write();
+    Migration_Matrix_cferr2->Write();
+    Migration_Matrix_hf->Write();
+    Migration_Matrix_hfstats1->Write();
+    Migration_Matrix_hfstats2->Write();
+    Migration_Matrix_jes->Write();
+    Migration_Matrix_lf->Write();
+    Migration_Matrix_lfstats1->Write();
+    Migration_Matrix_lfstats2->Write();
+
+
+
+
+}
+
+
+

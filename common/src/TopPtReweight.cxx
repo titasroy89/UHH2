@@ -12,6 +12,10 @@ TopPtReweight::TopPtReweight(uhh2::Context& ctx,
 			     bool apply_weight,
 			     double norm_factor):
   a_(a), b_(b),
+  h_pt_rew_weight_(ctx.declare_event_output<float>("weight_pt_rew")),
+  h_pt_rew_weight_down_(ctx.declare_event_output<float>("weight_pt_rew_down")),
+  h_pt_rew_weight_nolimit_(ctx.declare_event_output<float>("weight_pt_rew_nolimit")),
+  h_pt_rew_weight_nolimit_down_(ctx.declare_event_output<float>("weight_pt_rew_down_nolimit")),
   apply_weight_(apply_weight),
   norm_factor_(norm_factor),
   ttgen_name_(ttgen_name){
@@ -24,32 +28,43 @@ TopPtReweight::TopPtReweight(uhh2::Context& ctx,
   if(!ttgen_name_.empty()){
     h_ttbargen_ = ctx.get_handle<TTbarGen>(ttgen_name);
   }
+ 
 }
 
 
-
-
-
-bool TopPtReweight::process(uhh2::Event& event){
-  if (event.isRealData || (!boost::algorithm::contains(version_,"ttbar") && !boost::algorithm::contains(version_,"ttjets") && !boost::algorithm::starts_with(version_,"ttto")) ) {
-    return true;
-  }
+bool TopPtReweight::process(uhh2::Event& event){ 
+  event.set(h_pt_rew_weight_, 1.f);
+  event.set(h_pt_rew_weight_down_, 1.f);
+  event.set(h_pt_rew_weight_nolimit_, 1.f);
+  event.set(h_pt_rew_weight_nolimit_down_, 1.f);
+  if (event.isRealData) return true; 
+//  if (event.isRealData || (!boost::algorithm::contains(version_,"ttbar") && !boost::algorithm::contains(version_,"ttjets") && !boost::algorithm::starts_with(version_,"ttto")) ) {
+//    return true;
+//  }
   const TTbarGen& ttbargen = !ttgen_name_.empty() ? event.get(h_ttbargen_) : TTbarGen(*event.genparticles,false);
   
   float wgt = 1.;
+  float wgt2 = 1.;
   if (ttbargen.DecayChannel() != TTbarGen::e_notfound) {
     float tpt1 = ttbargen.Top().v4().Pt();
     float tpt2 = ttbargen.Antitop().v4().Pt();
+    wgt2 = sqrt(exp(a_+b_*tpt1)*exp(a_+b_*tpt2));
     tpt1 = std::min(tpt1, float(500.));
     tpt2 = std::min(tpt2, float(500.));
     wgt = sqrt(exp(a_+b_*tpt1)*exp(a_+b_*tpt2));
   }
 
-  if(!weight_name_.empty())
-    event.set(h_weight_, wgt);
-  if (apply_weight_) {
-    event.weight *= wgt*norm_factor_;
-  }
+  event.set(h_pt_rew_weight_,wgt); 
+  event.set(h_pt_rew_weight_down_,2*wgt - 1);
+
+  event.set(h_pt_rew_weight_nolimit_,wgt2);
+  event.set(h_pt_rew_weight_nolimit_down_,2*wgt2 - 1);
+
+//  if(!weight_name_.empty())
+//    event.set(h_weight_, wgt);
+//  if (apply_weight_) {
+//    event.weight *= wgt*norm_factor_;
+//  }
   return true;
 }
 

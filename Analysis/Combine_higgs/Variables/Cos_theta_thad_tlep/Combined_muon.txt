@@ -1,0 +1,40 @@
+Combination of SR1T_muon=SR1T_muonCos_theta_thad_tlep.txt  SR0T_muon=SR0T_muonCos_theta_thad_tlep.txt  CR1_muon=CR1_muonCos_theta_thad_tlep.txt
+imax 3 number of bins
+jmax 5 number of processes minus 1
+kmax 8 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes *          CR1_muon   Cos_theta_thad_tlep_muon_3cat.root CR1/$PROCESS/nominal CR1/$PROCESS/$SYSTEMATIC
+shapes *          SR0T_muon  Cos_theta_thad_tlep_muon_3cat.root SR0T/$PROCESS/nominal SR0T/$PROCESS/$SYSTEMATIC
+shapes *          SR1T_muon  Cos_theta_thad_tlep_muon_3cat.root SR1T/$PROCESS/nominal SR1T/$PROCESS/$SYSTEMATIC
+----------------------------------------------------------------------------------------------------------------------------------
+bin          SR1T_muon  SR0T_muon  CR1_muon 
+observation  -1         -1         -1       
+----------------------------------------------------------------------------------------------------------------------------------
+bin                               SR1T_muon  SR1T_muon  SR1T_muon  SR1T_muon  SR1T_muon  SR1T_muon  SR0T_muon  SR0T_muon  SR0T_muon  SR0T_muon  SR0T_muon  SR0T_muon  CR1_muon   CR1_muon   CR1_muon   CR1_muon   CR1_muon   CR1_muon 
+process                           Ttbar      dy         wjets      vv         qcd        singletop  Ttbar      dy         wjets      vv         qcd        singletop  Ttbar      dy         wjets      vv         qcd        singletop
+process                           0          1          2          3          4          5          0          1          2          3          4          5          0          1          2          3          4          5        
+rate                              -1         -1         -1         -1         -1         -1         -1         -1         -1         -1         -1         -1         -1         -1         -1         -1         -1         -1       
+----------------------------------------------------------------------------------------------------------------------------------
+lumi                    lnN       1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025      1.025    
+muHLT                   shape     1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0      
+muID                    shape     1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0      
+pileup                  shape     1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0        1.0      
+ST_rate       param  1.0 0.30
+wjets_rate    param  1.0 0.25
+ttbar_rate    param  1.0 0.20
+other_rate    param  1.0 0.30
+other_rate    rateParam SR1T_muon qcd 1  
+other_rate    rateParam SR0T_muon vv 1  
+wjets_rate    rateParam CR1_muon wjets 1  
+other_rate    rateParam SR0T_muon dy 1  
+ST_rate       rateParam CR1_muon singletop 1  
+wjets_rate    rateParam SR0T_muon wjets 1  
+other_rate    rateParam SR0T_muon qcd 1  
+other_rate    rateParam SR1T_muon vv 1  
+wjets_rate    rateParam SR1T_muon wjets 1  
+other_rate    rateParam SR1T_muon dy 1  
+ST_rate       rateParam SR1T_muon singletop 1  
+other_rate    rateParam CR1_muon dy 1  
+other_rate    rateParam CR1_muon vv 1  
+other_rate    rateParam CR1_muon qcd 1  
+ST_rate       rateParam SR0T_muon singletop 1  

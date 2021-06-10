@@ -32,6 +32,10 @@ class TopPtReweight : public uhh2::AnalysisModule {
   uhh2::Event::Handle<TTbarGen> h_ttbargen_;
   uhh2::Event::Handle<float> h_weight_;
   float a_, b_;
+  uhh2::Event::Handle< float > h_pt_rew_weight_;
+  uhh2::Event::Handle< float > h_pt_rew_weight_down_;
+  uhh2::Event::Handle< float > h_pt_rew_weight_nolimit_;
+  uhh2::Event::Handle< float > h_pt_rew_weight_nolimit_down_;
   bool apply_weight_;
   double norm_factor_;
   std::string version_;
