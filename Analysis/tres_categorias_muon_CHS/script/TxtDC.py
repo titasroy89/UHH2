@@ -101,8 +101,8 @@ for x in range(len(channels)):
         list_files["file_{0}".format(x)].write("\n---------------------------------------------------\n")
 
 	for el in syst:
-            if el == 'toptag':
-	        continue
+#            if el == 'toptag':
+#	        continue
             list_files["file_{0}".format(x)].write(el+' shape ')
             for xxx in range(len(proc)):
 	        if el in list_syst[len(proc)*x + xxx]:

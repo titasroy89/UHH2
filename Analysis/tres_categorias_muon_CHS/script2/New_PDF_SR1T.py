@@ -48,7 +48,7 @@ for i in range(1,bin):
 #h_PDF["PDFUp"].Draw()
 
 fout = R.TFile("templates_pdf_SR1T.root", 'recreate')
-fout.mkdir('SR1T/ttbar')
-fout.cd("SR1T/ttbar")
-R.gDirectory.WriteObject(h_PDF["PDFUp"],"PDFUp" )
-R.gDirectory.WriteObject(h_PDF["PDFDown"],"PDFDown" )
+#fout.mkdir('SR1T/ttbar')
+#fout.cd("SR1T/ttbar")
+R.gDirectory.WriteObject(h_PDF["PDFUp"],"ttbar_pdf_up" )
+R.gDirectory.WriteObject(h_PDF["PDFDown"],"ttbar_pdf_down" )

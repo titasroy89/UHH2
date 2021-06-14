@@ -234,8 +234,9 @@ for sample in sample_names:
 		_file[sample] = TFile("%s/uhh2.AnalysisModuleRunner.MC.%s.root"%(_fileDir,sample),"read")
         	print "%s/uhh2.AnalysisModuleRunner.MC.%s.root"%(_fileDir,sample)
 		tree2_MC[sample]=_file[sample].Get("AnalysisTree")
-#	        tree2_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pt_rew*weight_btagdisc_central*1.0*(btagN==0 && rec_chi2 > 30 && Mttbar < 4000)")
-                tree2_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*1.0*(btagN==0 && wtagN >= 0 && rec_chi2 > 30 && Mttbar < 4000)")
+	        tree2_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal*(ttagN == 1 && wtagN == 0 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
+
+#               tree2_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*1.0*(btagN==0 && wtagN >= 0 && rec_chi2 > 30 && Mttbar < 4000)")
                 hist1_[sample] = tree2_MC[sample].GetHistogram()                
       	  	hist1_[sample].SetFillColor(stackList[sample][0])
         	hist1_[sample].SetLineColor(stackList[sample][0])
@@ -251,7 +252,7 @@ _file["Data"] = TFile("%s/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run2018
 print "%s/uhh2.AnalysisModuleRunner.DATA.DATA.root"%(_fileDir)
 
 tree = _file["Data"].Get("AnalysisTree")
-tree.Draw("%s>>dat_hist(%i,%i,%f)"%(histName,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"(wtagN >= 0 && btagN==0 && rec_chi2 > 30 && Mttbar < 4000)")
+tree.Draw("%s>>dat_hist(%i,%i,%f)"%(histName,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"(ttagN == 1 && wtagN == 0 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
 dataHist=tree.GetHistogram()
 print "total:",dataHist.Integral()
 print "bins:",dataHist.GetNbinsX()

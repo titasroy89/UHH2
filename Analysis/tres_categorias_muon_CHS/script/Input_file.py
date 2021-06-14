@@ -31,25 +31,73 @@ if argv[1] == 'Rapidity_lep':
     Bin = [-2.4,-2.,-1.6,-1.2,-0.8,-0.4,0.0,0.4,0.8,1.2,1.6,2,2.4]
 
 nb = len(Bin)-1
-ct = '(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger)'
-systematic_direction_Ttbar={'nominal':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger)',
-                            'pileupUp':'(weight_sfmu_HighPtID)*(weight_pu_up)*(weight_sfmu_Trigger)',
-                            'pileupDown':'(weight_sfmu_HighPtID)*(weight_pu_down)*(weight_sfmu_Trigger)',
-                            'muIDUp':'(weight_sfmu_HighPtID_up)*(weight_pu)*(weight_sfmu_Trigger)',
-                            'muIDDown':'(weight_sfmu_HighPtID_down)*(weight_pu)*(weight_sfmu_Trigger)',
-                            'muHLTUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_up)',
-                            'muHLTDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)'
+ct = '(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)'
+systematic_direction_Ttbar={'nominal':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'pileupUp':'(weight_sfmu_HighPtID)*(weight_pu_up)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'pileupDown':'(weight_sfmu_HighPtID)*(weight_pu_down)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'muIDUp':'(weight_sfmu_HighPtID_up)*(weight_pu)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'muIDDown':'(weight_sfmu_HighPtID_down)*(weight_pu)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'muHLTUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_up)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'muHLTDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'cferr1Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_cferr1up)*(muonrecSF_nominal)',
+	 		    'cferr1Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_cferr1down)*(muonrecSF_nominal)',
+                            'hfUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfup)*(muonrecSF_nominal)',
+		    	    'hfDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfdown)*(muonrecSF_nominal)',
+			    'hfstats1Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfstats1up)*(muonrecSF_nominal)',
+			    'hfstats1Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfstats1down)*(muonrecSF_nominal)',
+			    'hfstats2Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfstats2up)*(muonrecSF_nominal)',
+			    'hfstats2Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfstats2down)*(muonrecSF_nominal)',
+			    'jesUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_jesup)*(muonrecSF_nominal)',
+			    'jesDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_jesdown)*(muonrecSF_nominal)',
+			    'lfUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfup)*(muonrecSF_nominal)',
+		            'lfDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfdown)*(muonrecSF_nominal)',
+		            'lfstats1Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfstats1up)*(muonrecSF_nominal)',
+                            'lfstats1Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfstats1down)*(muonrecSF_nominal)',
+			    'lfstats2Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfstats2up)*(muonrecSF_nominal)',
+                            'lfstats2Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfstats2down)*(muonrecSF_nominal)',
+			    'pt_rewUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(1)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+			    'pt_rewDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew_down)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'misttagUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)*1.02',
+ 		            'misttagDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)*0.98',
+                            'miswtagUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)*1.02',
+			    'miswtagDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)*0.98',		
+                            'toptagUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_up_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+			    'toptagDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_down_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',	
 }
-systematic_direction_otherbkgs={'nominal':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger)',
-                            'pileupUp':'(weight_sfmu_HighPtID)*(weight_pu_up)*(weight_sfmu_Trigger)',
-                            'pileupDown':'(weight_sfmu_HighPtID)*(weight_pu_down)*(weight_sfmu_Trigger)',
-                            'muIDUp':'(weight_sfmu_HighPtID_up)*(weight_pu)*(weight_sfmu_Trigger)',
-                            'muIDDown':'(weight_sfmu_HighPtID_down)*(weight_pu)*(weight_sfmu_Trigger)',
-                            'muHLTUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_up)',
-                            'muHLTDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)',
+systematic_direction_otherbkgs={'nominal':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'pileupUp':'(weight_sfmu_HighPtID)*(weight_pu_up)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'pileupDown':'(weight_sfmu_HighPtID)*(weight_pu_down)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'muIDUp':'(weight_sfmu_HighPtID_up)*(weight_pu)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'muIDDown':'(weight_sfmu_HighPtID_down)*(weight_pu)*(weight_sfmu_Trigger)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'muHLTUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_up)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'muHLTDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'cferr1Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_cferr1up)*(muonrecSF_nominal)',
+                            'cferr1Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_cferr1down)*(muonrecSF_nominal)',
+                            'hfUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfup)*(muonrecSF_nominal)',
+                            'hfDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfdown)*(muonrecSF_nominal)',
+                            'hfstats1Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfstats1up)*(muonrecSF_nominal)',
+                            'hfstats1Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfstats1down)*(muonrecSF_nominal)',
+                            'hfstats2Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfstats2up)*(muonrecSF_nominal)',
+                            'hfstats2Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_hfstats2down)*(muonrecSF_nominal)',
+                            'jesUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_jesup)*(muonrecSF_nominal)',
+                            'jesDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_jesdown)*(muonrecSF_nominal)',
+                            'lfUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfup)*(muonrecSF_nominal)',
+                            'lfDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfdown)*(muonrecSF_nominal)',
+                            'lfstats1Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfstats1up)*(muonrecSF_nominal)',
+                            'lfstats1Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfstats1down)*(muonrecSF_nominal)',
+                            'lfstats2Up':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfstats2up)*(muonrecSF_nominal)',
+                            'lfstats2Down':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_lfstats2down)*(muonrecSF_nominal)',
+                            'pt_rewUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(1)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'pt_rewDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew_down)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'misttagUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)*1.02',
+                            'misttagDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)*0.98',
+                            'miswtagUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)*1.02',
+                            'miswtagDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)*0.98',
+                            'toptagUp':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_up_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
+                            'toptagDown':'(weight_sfmu_HighPtID)*(weight_pu)*(weight_sfmu_Trigger_down)*(weight_toptagSF_down_)*(weight_pt_rew)*(weight_btagdisc_central)*(muonrecSF_nominal)',
 }
 
-inputdir = "/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/2018/muon/"
+inputdir = "/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/2018_CHS/muon/"
 samplelist = {'DATA':'uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run2018.root',
 'singletop':'uhh2.AnalysisModuleRunner.MC.ST_2018.root',
 'qcd':'uhh2.AnalysisModuleRunner.MC.QCD_HT_2018.root',
@@ -59,9 +107,9 @@ samplelist = {'DATA':'uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run2018.roo
 'Ttbar':'uhh2.AnalysisModuleRunner.MC.TTToSemiLeptonic_2018.root',
 }
 
-categories=['T1','T0', 'T0B0']
-fout = TFile('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/Combine_higgs/'+argv[1]+'_muon_3cat.root', 'recreate')
-
+categories=['T1']
+fout = TFile('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/tres_categorias_muon_CHS/'+argv[1]+'_muon_3cat.root', 'recreate')
+ 
 type = ['SR1T','SR0T','CR1']
 process  = ['Ttbar','singletop','data_obs','qcd','wjets','vv','dy']
 
@@ -77,10 +125,10 @@ for cat in categories:
                 myfile = TFile(inputdir+samplelist[key_sample])
                 mytree = myfile.Get("AnalysisTree")
                 mytree.SetAlias("invmass",argv[1])
-                gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/Combine_higgs/'+argv[1]+'_muon_3cat.root:/SR1T/'+key_sample)
+                gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/tres_categorias_muon_CHS/'+argv[1]+'_muon_3cat.root:/SR1T/'+key_sample)
                 if key_sample == 'DATA':
-                    gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/Combine_higgs/'+argv[1]+'_muon_3cat.root:/SR1T/data_obs')
-                    cut = str('(ttagN==1 & btagN==0)')
+                    gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/tres_categorias_muon_CHS/'+argv[1]+'_muon_3cat.root:/SR1T/data_obs')
+                    cut = str('(ttagN>=0 & btagN>=1)')
                     print("--------------------------------------")
                     print "Processing: ",key_sample
                     print "Applying cut:",cut
@@ -132,9 +180,9 @@ for cat in categories:
                 myfile = TFile(inputdir+samplelist[key_sample])
                 mytree = myfile.Get("AnalysisTree")
                 mytree.SetAlias("invmass",argv[1])
-                gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/Combine_higgs/'+argv[1]+'_muon_3cat.root:/SR0T/'+key_sample)
+                gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/tres_categorias_muon_CHS/'+argv[1]+'_muon_3cat.root:/SR0T/'+key_sample)
                 if key_sample == 'DATA':
-                    gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/Combine_higgs/'+argv[1]+'_muon_3cat.root:/SR0T/data_obs')
+                    gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/tres_categorias_muon_CHS/'+argv[1]+'_muon_3cat.root:/SR0T/data_obs')
                     cut = str('(ttagN==0 & btagN==1)')
                     print("--------------------------------------")
                     print "Processing: ",key_sample
@@ -186,9 +234,9 @@ for cat in categories:
                 myfile = TFile(inputdir+samplelist[key_sample])
                 mytree = myfile.Get("AnalysisTree")
                 mytree.SetAlias("invmass",argv[1])
-                gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/Combine_higgs/'+argv[1]+'_muon_3cat.root:/CR1/'+key_sample)
+                gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/tres_categorias_muon_CHS/'+argv[1]+'_muon_3cat.root:/CR1/'+key_sample)
                 if key_sample == 'DATA':
-                    gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/Combine_higgs/'+argv[1]+'_muon_3cat.root:/CR1/data_obs')
+                    gDirectory.cd('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/tres_categorias_muon_CHS/'+argv[1]+'_muon_3cat.root:/CR1/data_obs')
                     cut = str('(ttagN==0 & btagN==0)')
                     print("--------------------------------------")
                     print "Processing: ",key_sample

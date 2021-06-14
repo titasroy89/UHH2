@@ -13,16 +13,16 @@ class Background :
         self.hist = hist
         if(name == 'wjets'): 
 	        self.norm = 1.
-       	        self.err  = 0.2
+       	        self.err  = 0.3
         if(name == 'dy'):
                 self.norm = 1.
-                self.err  = 0.2
+                self.err  = 0.3
         if(name == 'qcd'):
                 self.norm = 1.
-                self.err  = 0.2
+                self.err  = 0.3
         if(name == 'st'):
                 self.norm = 1.
-                self.err  = 0.2
+                self.err  = 0.3
 
 class Systematic :
     def __init__(self, name, response):
@@ -32,7 +32,7 @@ class Systematic :
 
 gStyle.SetOptStat(0)
 gROOT.SetBatch(True)
-unfolding_input_data = TFile("Input_undfolding_data_.root")
+unfolding_input_data = TFile("Input_undfolding_data.root")
 measurement = unfolding_input_data.Get("Data")
 expectation = unfolding_input_data.Get("Var_gen")
 ttbar = unfolding_input_data.Get("TTbar")
@@ -52,7 +52,7 @@ backgrounds["st"] = Background("st",st)
 
  
 systematics2 = {}
-for name in ["pu","MuonID","Trigger","mistoptag"]:
+for name in ["pu","MuonID","Trigger","mistoptag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","ptrew","toptag","muonrec","pdf","q2","jer","jec"]:
     systematics2[name+"_up"] = Systematic(name,unfolding_input_data.Get("ttbar_"+name+"_up"))
     systematics2[name+"_down"] = Systematic(name,unfolding_input_data.Get("ttbar_"+name+"_down"))
 
@@ -134,7 +134,7 @@ unfold2 = TUnfoldDensity(response,TUnfold.kHistMapOutputVert, TUnfold.kRegModeCu
 add_up = [0]*totUnc.GetNbinsX()
 add_down = [0]*totUnc.GetNbinsX()
 
-for name in ["pu","Trigger", "MuonID","mistag"]:
+for name in ["pu","Trigger", "MuonID","mistag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","ptrew","toptag","muonrec","pdf","q2","jer","jec"]:
 
     print(name)
     tempsys_up = unfolding_input_data.Get("ttbar_"+name+"_up")

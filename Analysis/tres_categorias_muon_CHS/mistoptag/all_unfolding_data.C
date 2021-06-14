@@ -12,7 +12,7 @@
 #include "TLegend.h"
 
 
-void all_unfolding_data(float_t top = 1)
+void all_unfolding_data(float_t top = 1, string year = "2018")
 {
 
     
@@ -21,27 +21,27 @@ void all_unfolding_data(float_t top = 1)
     gStyle->SetOptStat(0);
 
     TChain *chreco_ttbar = new TChain("AnalysisTree","");
-    chreco_ttbar->Add("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/2018_CHS/muon/uhh2.AnalysisModuleRunner.MC.TTT*.root/AnalysisTree");
+    chreco_ttbar->Add(Form("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/%s_CHS/muon/uhh2.AnalysisModuleRunner.MC.TTT*.root/AnalysisTree",year.c_str()));
     TTree *treereco_ttbar = (TTree*) chreco_ttbar;
 
     TChain *chreco_wjets = new TChain("AnalysisTree","");
-    chreco_wjets->Add("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/2018_CHS/muon/uhh2.AnalysisModuleRunner.MC.WJ*.root/AnalysisTree");
+    chreco_wjets->Add(Form("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/%s_CHS/muon/uhh2.AnalysisModuleRunner.MC.WJ*.root/AnalysisTree",year.c_str()));
     TTree *treereco_wjets = (TTree*) chreco_wjets;
 
     TChain *chreco_ST = new TChain("AnalysisTree","");
-    chreco_ST->Add("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/2018_CHS/muon/uhh2.AnalysisModuleRunner.MC.ST*.root/AnalysisTree");
+    chreco_ST->Add(Form("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/%s_CHS/muon/uhh2.AnalysisModuleRunner.MC.ST*.root/AnalysisTree",year.c_str()));
     TTree *treereco_ST = (TTree*) chreco_ST;
 
     TChain *chreco_DY = new TChain("AnalysisTree","");
-    chreco_DY->Add("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/2018_CHS/muon/uhh2.AnalysisModuleRunner.MC.DYJets*.root/AnalysisTree");
+    chreco_DY->Add(Form("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/%s_CHS/muon/uhh2.AnalysisModuleRunner.MC.DYJets*.root/AnalysisTree",year.c_str()));
     TTree *treereco_DY = (TTree*) chreco_DY;
 
     TChain *chreco_QCD = new TChain("AnalysisTree","");
-    chreco_QCD->Add("/nfs/dust/cms/user/hugobg/ZpPrime_102X/analysis_output/2018_CHS/muon/uhh2.AnalysisModuleRunner.MC.QCD*.root/AnalysisTree");
+    chreco_QCD->Add(Form("/nfs/dust/cms/user/hugobg/ZpPrime_102X/analysis_output/%s_CHS/muon/uhh2.AnalysisModuleRunner.MC.QCD*.root/AnalysisTree",year.c_str()));
     TTree *treereco_QCD = (TTree*) chreco_QCD;
  
     TChain *chreco_data = new TChain("AnalysisTree","");
-    chreco_data->Add("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/2018_CHS/muon/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run2018.root/AnalysisTree");
+    chreco_data->Add(Form("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/%s_CHS/muon/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run2018.root/AnalysisTree",year.c_str()));
     TTree *treereco_data = (TTree*) chreco_data;
 
 
@@ -74,31 +74,31 @@ void all_unfolding_data(float_t top = 1)
     string selcuts;
     if(top == 0)  selcuts = "(rec_chi2 > 30 && btagN == 0 && Ak8_j1_pt > 500 && TMath::Abs(Ak8_j1_eta) < 2.4)";
     if(top == 1)  selcuts = "(rec_chi2 > 30 && ttagN >= 1 && btagN == 0 && Ak8_j1_pt > 500 && TMath::Abs(Ak8_j1_eta) < 2.4)";
-
-    cout << selcuts.c_str() << endl;
+    if(top == 2)  selcuts = "(rec_chi2 > 30 && wtagN >= 1 && btagN == 0 && Ak8_j1_pt > 500 && TMath::Abs(Ak8_j1_eta) < 2.4)";
 
 //------Filling_bkgs---------??
 
+
     treereco_data->Project("DATA_mSD","Ak8_j1_mSD",Form("%s",selcuts.c_str()));
-    treereco_ttbar->Project("ttbar_mSD","Ak8_j1_mSD",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
-    treereco_wjets->Project("wjets_mSD","Ak8_j1_mSD",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pt_rew",selcuts.c_str()));
-    treereco_ST->Project("ST_mSD","Ak8_j1_mSD",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pt_rew",selcuts.c_str()));
-    treereco_DY->Project("DY_mSD","Ak8_j1_mSD",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pt_rew",selcuts.c_str()));
-    treereco_QCD->Project("QCD_mSD","Ak8_j1_mSD",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
+    treereco_ttbar->Project("ttbar_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_wjets->Project("wjets_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_ST->Project("ST_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_DY->Project("DY_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_QCD->Project("QCD_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
 
     treereco_data->Project("DATA_eta","Ak8_j1_eta",Form("%s",selcuts.c_str()));
-    treereco_ttbar->Project("ttbar_eta","Ak8_j1_eta",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
-    treereco_wjets->Project("wjets_eta","Ak8_j1_eta",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
-    treereco_ST->Project("ST_eta","Ak8_j1_eta",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
-    treereco_DY->Project("DY_eta","Ak8_j1_eta",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
-    treereco_QCD->Project("QCD_eta","Ak8_j1_eta",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
+    treereco_ttbar->Project("ttbar_eta","Ak8_j1_eta",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_wjets->Project("wjets_eta","Ak8_j1_eta",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_ST->Project("ST_eta","Ak8_j1_eta",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_DY->Project("DY_eta","Ak8_j1_eta",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_QCD->Project("QCD_eta","Ak8_j1_eta",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
 
     treereco_data->Project("DATA_pt","Ak8_j1_pt",Form("%s",selcuts.c_str()));
-    treereco_ttbar->Project("ttbar_pt","Ak8_j1_pt",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
-    treereco_wjets->Project("wjets_pt","Ak8_j1_pt",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
-    treereco_ST->Project("ST_pt","Ak8_j1_pt",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
-    treereco_DY->Project("DY_pt","Ak8_j1_pt",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
-    treereco_QCD->Project("QCD_pt","Ak8_j1_pt",Form("%s*weight*weight_pu*weight_sfmu_HighPtID*weight_sfmu_Trigger**weight_pt_rew",selcuts.c_str()));
+    treereco_ttbar->Project("ttbar_pt","Ak8_j1_pt",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_wjets->Project("wjets_pt","Ak8_j1_pt",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_ST->Project("ST_pt","Ak8_j1_pt",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_DY->Project("DY_pt","Ak8_j1_pt",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
+    treereco_QCD->Project("QCD_pt","Ak8_j1_pt",Form("%s*weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal",selcuts.c_str()));
 
 
 
@@ -139,7 +139,7 @@ void all_unfolding_data(float_t top = 1)
     DATA_pt->SetMarkerStyle(21);
     DATA_pt->Draw("p same");
 
-/*
+
     c1.cd(3);
 
     THStack *hs2 = new THStack("hs2"," stacked");
@@ -156,7 +156,7 @@ void all_unfolding_data(float_t top = 1)
     hs2->Draw("HIST");
     DATA_eta->SetMarkerStyle(21);
     DATA_eta->Draw("p same");
-*/
+
 
     if(top == 0) c1.Print("mistoptag.pdf");
     if(top == 1) c1.Print("mistoptag_toptagged.pdf");
@@ -174,6 +174,9 @@ void all_unfolding_data(float_t top = 1)
     cout << a << endl;
     cout << "QCD: " << QCD_pt->IntegralAndError(1,20,a) << endl;
     cout << a << endl;
+
+
+
 }
 
 

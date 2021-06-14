@@ -48,8 +48,8 @@ for i in range(1,bin):
     h_q2["q2Down"].SetBinContent(i,h_tmp_q2[str(i)].GetMean()-h_tmp_q2[str(i)].GetRMS())
 
 fout = R.TFile("templates_q2_SR1T.root", 'recreate')
-fout.mkdir('SR1T/ttbar')
-fout.cd("SR1T/ttbar")
-R.gDirectory.WriteObject(h_q2["q2Up"],"q2ttbarUp" )
-R.gDirectory.WriteObject(h_q2["q2Down"],"q2ttbarDown" )
+#fout.mkdir('SR1T/ttbar')
+#fout.cd("SR1T/ttbar")
+R.gDirectory.WriteObject(h_q2["q2Up"],"ttbar_q2_up" )
+R.gDirectory.WriteObject(h_q2["q2Down"],"ttbar_q2_down" )
 
