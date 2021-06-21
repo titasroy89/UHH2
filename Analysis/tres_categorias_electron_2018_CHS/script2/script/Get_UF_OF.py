@@ -6,12 +6,13 @@ from sys import *
 import numpy
 
 samplelist = {
+#'other':'Variables/'+argv[1]+'/'+argv[1]+'_muon_3cat.root',
 'other':argv[1]+'_muon_3cat.root',
 }
 
 #proc = ['Ttbar','data_obs','singletop','wjets','dy','qcd','vv']
 #cat = ['SR1T']
-fout = R.TFile('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/tres_categorias_electron_2018_CHS/'+argv[1]+'_muon.root', 'recreate')
+fout = R.TFile('/nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/Analysis/tres_categorias_muon_CHS/'+argv[1]+'_muon.root', 'recreate')
 #for t in cat:
 #    for p in proc:
 #        fout.mkdir(t+'/'+p)

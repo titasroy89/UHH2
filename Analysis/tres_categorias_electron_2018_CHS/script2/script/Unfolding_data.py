@@ -148,7 +148,7 @@ unfold2 = TUnfoldDensity(response,TUnfold.kHistMapOutputVert, TUnfold.kRegModeCu
 addUp = [0]*totUnc.GetNbinsX()
 addDown = [0]*totUnc.GetNbinsX()
 
-for name in ["pileup","muHLT", "muID","misttag","miswtag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","toptag","muon_rec"]:
+for name in ["pileup","muHLT", "muID","misttag","miswtag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","toptag","muon_rec","jer","jec"]:
 
     print(name)
     tempsysUp = unfolding_input_data.Get("ttbar_semi_"+name+"Up")
@@ -173,7 +173,7 @@ for name in ["pileup","muHLT", "muID","misttag","miswtag","cferr1","cferr2","hf"
         errorDown = (mean-down)/(mean)
         addUp[y-1] = addUp[y-1] + errorUp*errorUp
         addDown[y-1] = addDown[y-1] + errorDown*errorDown
-        print addUp 
+    
      
     del result2
     del result3

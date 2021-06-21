@@ -42,3 +42,5 @@ for region in "${StringArray2[@]}"; do
  
 done
 done
+
+
