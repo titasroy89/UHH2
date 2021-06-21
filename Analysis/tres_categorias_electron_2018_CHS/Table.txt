@@ -1,0 +1,8 @@
+ttbar_semi	6459\pm2395
+ttbar_others	572\pm248
+singletop	532\pm196
+DATA	7525\pm0
+qcd	12\pm8
+wjets	329\pm182
+vv	7\pm5
+dy	21\pm11

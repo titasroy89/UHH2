@@ -1,0 +1,42 @@
+Combination of SR1T_muon=SR1T_muonDeltaY.txt
+imax 1 number of bins
+jmax 5 number of processes minus 1
+kmax 22 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes *          SR1T_muon  DeltaY_muon.root SR1T/$PROCESS/nominal SR1T/$PROCESS/$SYSTEMATIC
+----------------------------------------------------------------------------------------------------------------------------------
+bin          SR1T_muon
+observation  -1       
+----------------------------------------------------------------------------------------------------------------------------------
+bin                               SR1T_muon  SR1T_muon  SR1T_muon  SR1T_muon  SR1T_muon  SR1T_muon
+process                           Ttbar      dy         wjets      vv         qcd        singletop
+process                           0          1          2          3          4          5        
+rate                              -1         -1         -1         -1         -1         -1       
+----------------------------------------------------------------------------------------------------------------------------------
+cferr1                  shape     1.0        1.0        1.0        1.0        1.0        1.0      
+hf                      shape     1.0        1.0        1.0        1.0        1.0        1.0      
+hfstats1                shape     1.0        1.0        1.0        1.0        1.0        1.0      
+hfstats2                shape     1.0        1.0        1.0        1.0        1.0        1.0      
+jes                     shape     1.0        1.0        1.0        1.0        1.0        1.0      
+lf                      shape     1.0        1.0        1.0        1.0        1.0        1.0      
+lfstats1                shape     1.0        1.0        1.0        1.0        1.0        1.0      
+lfstats2                shape     1.0        1.0        1.0        1.0        1.0        1.0      
+lumi                    lnN       1.025      1.025      1.025      1.025      1.025      1.025    
+misttag                 shape     1.0        1.0        1.0        1.0        1.0        1.0      
+miswtag                 shape     1.0        1.0        1.0        1.0        1.0        1.0      
+muHLT                   shape     1.0        1.0        1.0        1.0        1.0        1.0      
+muID                    shape     1.0        1.0        1.0        1.0        1.0        1.0      
+pileup                  shape     1.0        1.0        1.0        1.0        1.0        1.0      
+pt_rew                  shape     1.0        1.0        1.0        1.0        1.0        1.0      
+toptag                  shape     1.0        1.0        1.0        1.0        1.0        1.0      
+qcd_rate      param  1.0 0.30
+ttbar_rate    param  1.0 0.20
+ST_rate       param  1.0 0.50
+vv_rate       param  1.0 0.30
+dy_rate       param  1.0 0.30
+wjets_rate    param  1.0 0.25
+qcd_rate      rateParam SR1T_muon qcd 1  
+vv_rate       rateParam SR1T_muon vv 1  
+wjets_rate    rateParam SR1T_muon wjets 1  
+dy_rate       rateParam SR1T_muon dy 1  
+ST_rate       rateParam SR1T_muon singletop 1  

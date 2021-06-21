@@ -13,16 +13,16 @@ class Background :
         self.hist = hist
         if(name == 'wjets'): 
 	        self.norm = 1.
-       	        self.err  = 0.2
+       	        self.err  = 0.3
         if(name == 'dy'):
                 self.norm = 1.
-                self.err  = 0.2
+                self.err  = 0.3
         if(name == 'qcd'):
                 self.norm = 1.
-                self.err  = 0.2
+                self.err  = 0.3
         if(name == 'st'):
                 self.norm = 1.
-                self.err  = 0.2
+                self.err  = 0.3
 
 class Systematic :
     def __init__(self, name, response):
@@ -32,7 +32,7 @@ class Systematic :
 
 gStyle.SetOptStat(0)
 gROOT.SetBatch(True)
-unfolding_input_data = TFile("Input_undfolding_data_.root")
+unfolding_input_data = TFile("Input_undfolding_data.root")
 measurement = unfolding_input_data.Get("Data")
 expectation = unfolding_input_data.Get("Var_gen")
 ttbar = unfolding_input_data.Get("TTbar")
@@ -52,8 +52,7 @@ backgrounds["st"] = Background("st",st)
 
  
 systematics2 = {}
-#for name in ["pu","MuonID","Trigger","mistoptag"]:
-for name in ["pu","mistoptag"]:
+for name in ["pu","MuonID","Trigger","mistoptag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","ptrew","toptag","elecrec","pdf","q2","jer","jec"]:
     systematics2[name+"_up"] = Systematic(name,unfolding_input_data.Get("ttbar_"+name+"_up"))
     systematics2[name+"_down"] = Systematic(name,unfolding_input_data.Get("ttbar_"+name+"_down"))
 
@@ -135,8 +134,8 @@ unfold2 = TUnfoldDensity(response,TUnfold.kHistMapOutputVert, TUnfold.kRegModeCu
 add_up = [0]*totUnc.GetNbinsX()
 add_down = [0]*totUnc.GetNbinsX()
 
-#for name in ["pu","Trigger", "MuonID","mistag"]:
-for name in ["pu","mistag"]:
+for name in ["pu","Trigger", "MuonID","mistag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","ptrew","toptag","elecrec","pdf","q2","jer","jec"]:
+
     print(name)
     tempsys_up = unfolding_input_data.Get("ttbar_"+name+"_up")
     unfold2.SetInput(tempsys_up)
@@ -245,8 +244,6 @@ leg2.Draw();
 c2.Print(argv[1]+"_Unc_data.pdf")
 
 
-
-
 # Mormilize tot cav matrx
 c3 = TCanvas("c3", "", 800, 600)
 c3.SetTopMargin(0.07)
@@ -306,6 +303,11 @@ pad1 =  TPad("pad1","pad1",0,0.3,1,1)
 pad1.SetBottomMargin(0.05)
 pad1.Draw()
 pad1.cd()
+
+
+for i in range (1,5):
+    result.SetBinContent(i,result.GetBinContent(9-i)) 
+    expectation.SetBinContent(i,expectation.GetBinContent(9-i))
     
 result.SetMarkerStyle(21)
 measurement.SetMarkerStyle(25)
@@ -368,8 +370,10 @@ print("Result:")
 for i in range (1,9):
 	print result.GetBinContent(i) 
 
-print("###############################")
+
 '''
+print("###############################")
+
 array_gen = [-2,-1.5,-1,-0.5,0.,0.5,1,1.5,2]
 array_rec = [-2,-1.5,-1.25,-1.0,-0.75,-0.5,-0.25,0,0.25,0.5,0.75,1.,1.25,1.5,2]
 
@@ -443,7 +447,7 @@ file2.write(str(error_array[0][6])+",")
 file2.write(str(error_array[0][7])+",")
 file2.write("\n")
 
+
+
+
 '''
-
-
-

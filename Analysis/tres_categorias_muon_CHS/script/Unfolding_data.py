@@ -1,5 +1,6 @@
 import math
 import sys
+import ROOT
 from sys import argv
 from ROOT import TH1, TH1F, TH2F, TFile, TCanvas, TPad, TLegend, TLatex, TColor, TMath, TVectorD, TGraph, TUnfold, Double, TSpline, TSpline3, TUnfoldDensity, TUnfoldSys, TAttLine, TStyle
 from ROOT import *
@@ -23,7 +24,9 @@ class Background :
         if(name == 'st'):
                 self.norm = 1.
                 self.err  = 0.3
-
+        if(name == 'ttbar_others'):
+                self.norm = 1.
+                self.err  = 0.3
 class Systematic :
     def __init__(self, name, response):
         self.name = name
@@ -36,6 +39,7 @@ unfolding_input_data = TFile("Input_undfolding_data.root")
 measurement = unfolding_input_data.Get("Data")
 expectation = unfolding_input_data.Get("Var_gen")
 ttbar = unfolding_input_data.Get("TTbar")
+ttbar_others = unfolding_input_data.Get("TTbar_others")
 wjets = unfolding_input_data.Get("WJets")
 dy = unfolding_input_data.Get("DY")
 qcd = unfolding_input_data.Get("QCD")
@@ -49,12 +53,12 @@ backgrounds["wjets"] = Background("wjets",wjets)
 backgrounds["dy"] = Background("dy",dy)
 backgrounds["qcd"] = Background("qcd",qcd)
 backgrounds["st"] = Background("st",st)
-
+backgrounds["ttbar_others"] = Background("ttbar_others",ttbar_others)
  
 systematics2 = {}
-for name in ["pu","MuonID","Trigger","mistoptag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","ptrew","toptag","muonrec","pdf","q2","jer","jec"]:
-    systematics2[name+"_up"] = Systematic(name,unfolding_input_data.Get("ttbar_"+name+"_up"))
-    systematics2[name+"_down"] = Systematic(name,unfolding_input_data.Get("ttbar_"+name+"_down"))
+for name in ["pu","MuonID","Trigger","mistoptag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","pt_rew","toptag","muon_rec","pdf","q2","jer","jec"]:
+    systematics2[name+"Up"] = Systematic(name,unfolding_input_data.Get("ttbar_semi_"+name+"Up"))
+    systematics2[name+"Down"] = Systematic(name,unfolding_input_data.Get("ttbar_semi_"+name+"Down"))
 
 unfold = TUnfoldDensity(response,TUnfold.kHistMapOutputVert, TUnfold.kRegModeCurvature, TUnfold.kEConstraintArea, TUnfoldDensity.kDensityModeBinWidth)
 unfold.SetInput(measurement)
@@ -66,7 +70,8 @@ for name, background in backgrounds.iteritems():
 
 # Do unfolding using ScanTau to determine regularization strength
 cc = TCanvas("cc", "cc", 700, 700)
-cc.cd()
+cc.Divide(1,1)
+cc.cd(1)
 bestTau = TGraph(1)
 scanResult = TSpline3()
 iBest = unfold.ScanTau(100,0.0001,0.1,scanResult,TUnfoldDensity.kEScanTauRhoAvgSys)
@@ -75,13 +80,22 @@ rho = Double(0)
 scanResult.GetKnot(iBest,Tau,rho)
 bestTau.SetPoint(1,Tau,rho)
 bestTau.SetMarkerColor(2)
-scanResult.Draw("P")
-bestTau.Draw("*")
 tl2 = TLatex()
 tl2.SetNDC()
 tl2.SetTextFont(42)
-legend = "log(#tau) = %.3e" % Tau
-tl2.DrawLatex(0.55,0.8,legend)
+legend = ""
+#tl2.DrawLatex(0.55,0.8,legend)
+scanResult.SetTitle("")
+scanResult.Draw("P")
+bestTau.Draw("*")
+latex = ROOT.TLatex()
+latex.SetTextSize(0.042)
+latex.SetTextAlign(11)
+latex.DrawLatex(-3.9,1.02,"Work in progress")
+latex2 = ROOT.TLatex()
+latex2.SetTextSize(0.042)
+latex2.SetTextAlign(11)
+latex2.DrawLatex(-2.2,1.02,"58.8 fb^{-1} (13 TeV)")
 cc.Draw()
 cc.Print(argv[1]+"_rho_Min.pdf")
 
@@ -131,18 +145,18 @@ fout = TFile('Syst_unfolded.root', 'recreate')
 unfold2 = TUnfoldDensity(response,TUnfold.kHistMapOutputVert, TUnfold.kRegModeCurvature, TUnfold.kEConstraintArea, TUnfoldDensity.kDensityModeBinWidth)
 
 
-add_up = [0]*totUnc.GetNbinsX()
-add_down = [0]*totUnc.GetNbinsX()
+addUp = [0]*totUnc.GetNbinsX()
+addDown = [0]*totUnc.GetNbinsX()
 
-for name in ["pu","Trigger", "MuonID","mistag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","ptrew","toptag","muonrec","pdf","q2","jer","jec"]:
+for name in ["pileup","muHLT", "muID","misttag","miswtag","cferr1","cferr2","hf","lf","hfstats1","hfstats2","lfstats1","lfstats2","jes","toptag","muon_rec","jer","jec"]:
 
     print(name)
-    tempsys_up = unfolding_input_data.Get("ttbar_"+name+"_up")
-    unfold2.SetInput(tempsys_up)
+    tempsysUp = unfolding_input_data.Get("ttbar_semi_"+name+"Up")
+    unfold2.SetInput(tempsysUp)
     unfold2.DoUnfold(tau)
     result2 = unfold2.GetOutput("result2")
-    tempsys_down = unfolding_input_data.Get("ttbar_"+name+"_down")
-    unfold2.SetInput(tempsys_down)
+    tempsysDown = unfolding_input_data.Get("ttbar_semi_"+name+"Down")
+    unfold2.SetInput(tempsysDown)
     unfold2.DoUnfold(tau)
     result3 = unfold2.GetOutput("result3")
     result2.SetName(name+"_Up")
@@ -155,20 +169,17 @@ for name in ["pu","Trigger", "MuonID","mistag","cferr1","cferr2","hf","lf","hfst
         mean = expectation.GetBinContent(y)
         up = result2.GetBinContent(y)
         down = result3.GetBinContent(y)
-        error_up = (mean-up)/(mean)
-        error_down = (mean-down)/(mean)
-        print(error_down)
-        add_up[y-1] = add_up[y-1] + error_up*error_up
-        print(add_up)
-        add_down[y-1] = add_down[y-1] + error_down*error_down
+        errorUp = (mean-up)/(mean)
+        errorDown = (mean-down)/(mean)
+        addUp[y-1] = addUp[y-1] + errorUp*errorUp
+        addDown[y-1] = addDown[y-1] + errorDown*errorDown
     
      
     del result2
     del result3
 
-
-print add_up
-
+print addUp
+print addDown
 c2 = TCanvas("c2", "", 800, 600)
 c2.SetTopMargin(0.08)
 c2.SetRightMargin(0.05)
@@ -182,11 +193,11 @@ totUnc.GetYaxis().SetRangeUser(0.0,1.0)
 c2.cd()
 
 
-print ("tot + add_up")
+print ("tot + addUp")
 for z in range(1,totUnc.GetNbinsX()+1):
     tot = totUnc.GetBinContent(z)
-    totUnc.SetBinContent(z,math.sqrt(tot*tot + add_up[z-1]))
-    sysUnc.SetBinContent(z,math.sqrt(add_up[z-1]))
+    totUnc.SetBinContent(z,math.sqrt(tot*tot + addUp[z-1]))
+    sysUnc.SetBinContent(z,math.sqrt(addUp[z-1]))
 
 print("Syt. Error")
 for z in range(1,totUnc.GetNbinsX()+1):
@@ -221,7 +232,7 @@ sysUnc.SetLineWidth(2)
 sysUnc.SetMarkerColor(4)
 sysUnc.SetMarkerStyle(21)
 
-leg2 = TLegend(0.2,0.39,0.45,0.88)
+leg2 = TLegend(0.55,0.49,0.88,0.88)
 leg2.AddEntry(totUnc,   "Total uncertainty","f")
 leg2.AddEntry(inputUnc, "Input stat. unc.","lp")
 leg2.AddEntry(matrixUnc,"Matrix stat. unc.","lp")
@@ -230,8 +241,10 @@ leg2.AddEntry(sysUnc,   "Systematic unc.","lp")
 
 leg2.SetFillStyle(0);
 leg2.SetBorderSize(0);
-leg2.SetTextSize(0.04);
+leg2.SetTextSize(0.03);
 leg2.SetTextFont(42);
+
+totUnc.SetTitle("")
 
 totUnc.Draw("hist")
 inputUnc.Draw("ep,same")
@@ -240,6 +253,15 @@ bkgUnc.Draw("ep,same")
 sysUnc.Draw("ep,same")
 
 leg2.Draw();
+
+latex3 = ROOT.TLatex()
+latex3.SetTextSize(0.042)
+latex3.SetTextAlign(11)
+latex3.DrawLatex(-1.9,1.02,"Work in progress")
+latex4 = ROOT.TLatex()
+latex4.SetTextSize(0.042)
+latex4.SetTextAlign(11)
+latex4.DrawLatex(0.8,1.02,"58.8 fb^{-1} (13 TeV)")
 
 c2.Print(argv[1]+"_Unc_data.pdf")
 
@@ -276,8 +298,8 @@ c3.Print("Cov_matrx_data.pdf")
 
 ratio = expectation.Clone()
 ratio.SetName("ratio")
-ratio.GetXaxis().SetTitleSize(0.085)
-ratio.GetXaxis().SetTitle("#Delta #cbar y #cbar")
+#ratio.GetXaxis().SetTitleSize(0.085)
+#ratio.GetXaxis().SetTitle("#Delta #cbar y #cbar")
 ratio.Divide(result)
     
 # Convert total, statistical uncertainty into error bands
@@ -300,7 +322,7 @@ inputUnc.SetFillStyle(1001)
 # Plot
 c4 = TCanvas("c4", "", 700, 700)
 pad1 =  TPad("pad1","pad1",0,0.3,1,1)
-pad1.SetBottomMargin(0.05)
+pad1.SetBottomMargin(0.08)
 pad1.Draw()
 pad1.cd()
 
@@ -314,7 +336,7 @@ measurement.SetMarkerStyle(25)
 measurement.SetLineColor(kRed)
 measurement.SetFillColor(kRed)
 expectation.SetLineColor(kBlue)
-expectation.SetFillColor(kBlue)
+#expectation.SetFillColor(kBlue)
 expectation.GetYaxis().SetTitleSize(25)
 expectation.GetXaxis().SetLabelSize(0)
 
@@ -322,23 +344,35 @@ result.SetTitle(";;Events")
 result.GetYaxis().SetTitleOffset(1.2)
 result.SetMinimum(0.0)
 result.SetAxisRange(0,max(result.GetMaximum(),result.GetMaximum())*1.15,"Y")
+result.GetXaxis().SetTitle("#Delta #cbar y #cbar")
 result.Draw()
 expectation.Draw('hist same')
 result.Draw("same")
-measurement.Draw('same')
+#measurement.Draw('same')
     
-leg4 = TLegend(0.6, 0.55, 0.95, 0.80)
+leg4 = TLegend(0.6, 0.65, 0.95, 0.90)
 leg4.SetFillStyle(0)
 leg4.SetTextFont(42)
 leg4.SetTextSize(0.025)
 leg4.SetBorderSize(0)
     
 leg4.AddEntry( result, 'Unfolded data', 'p')
-leg4.AddEntry( measurement, 'Measured data', 'l')
+#leg4.AddEntry( measurement, 'Measured data', 'l')
 leg4.AddEntry( expectation, 'Generator prediction', 'l')
 leg4.AddEntry( inputUnc, 'Stat. uncertainty','f');
 leg4.AddEntry( totUnc, 'Stat. #oplus syst. uncertainties','f');
 leg4.Draw()
+
+print("*********")
+print (result.GetMaximum())
+latex5 = ROOT.TLatex()
+latex5.SetTextSize(0.042)
+latex5.SetTextAlign(11)
+latex5.DrawLatex(-1.9,result.GetMaximum()*1.01,"Work in progress")
+latex6 = ROOT.TLatex()
+latex6.SetTextSize(0.042)
+latex6.SetTextAlign(11)
+latex6.DrawLatex(0.8,result.GetMaximum()*1.01,"58.8 fb^{-1} (13 TeV)")
     
 c4.cd()
 pad2 =  TPad("pad2","pad2",0,0.0,1,0.28)
@@ -347,8 +381,8 @@ pad2.SetBottomMargin(0.4)
 pad2.Draw()
 pad2.cd()
 pad2.SetGridy()
-ratio.SetMaximum(1.5)
-ratio.SetMinimum(0.5)
+ratio.SetMaximum(1.6)
+ratio.SetMinimum(0.4)
 ratio.UseCurrentStyle()
 ratio.GetYaxis().SetTitleSize(25)
 ratio.GetYaxis().SetTitleOffset(2.0)

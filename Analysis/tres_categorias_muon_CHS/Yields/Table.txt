@@ -1,0 +1,7 @@
+Ttbar	19416\pm2454
+data	24560\pm0
+dy	102\pm31
+qcd	901\pm145
+ST	1411\pm115
+vv	19\pm5
+wjets	1037\pm213

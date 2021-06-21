@@ -174,7 +174,7 @@ histograms = {
 sample_names = [ "TTbar", "DY", "QCD", "ST", "WJets"]
 hist1_={}
 for sample in sample_names:
-    _file[sample] = TFile("Input_undfolding_data_.root","read")
+    _file[sample] = TFile("Input_undfolding_data.root","read")
     hist1_[sample] = _file[sample].Get(sample)            
     hist1_[sample].SetFillColor(stackList[sample][0])
     hist1_[sample].SetLineColor(stackList[sample][0])
