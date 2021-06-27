@@ -8,7 +8,7 @@ from optparse import OptionParser
 
 from numpy import log10
 from array import array
-
+import math
 
 
 padRatio = 0.25
@@ -18,7 +18,7 @@ padGap = 0.01
 
 plotDirectory = "data_pre_plots"
 
-_fileDir ="/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/2018_CHS/muon/"
+_fileDir ="/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/2016_CHS/muon/all/"
 
 gROOT.SetBatch(True)
 
@@ -61,8 +61,8 @@ if not HasCMSStyle:
 ROOT.gROOT.ForceStyle()
 
 #stackList = { "TTbar":[kRed], "DYJets":[kGreen], "QCD":[kYellow],"WJets":[kBlue], "ST":[kOrange], "Diboson":[kTeal]}
-#stackList = { "TTToSemiLeptonic_2018_2":[kRed]} 
-stackList = {"TTToHadronic_2018":[kRed-7], "TTTo2L2Nu_2018":[kRed-10], "TTToSemiLeptonic_2018":[kRed],"DYJetsToLL_M-50_HT_2018":[kBlue], "QCD_HT_2018":[kTeal], "WJetsToLNu_2018":[kGreen], "ST_2018":[kYellow], "WW_WZ_ZZ_2018":[kOrange]}
+#stackList = { "TTToSemiLeptonic_2016_2":[kRed]} 
+stackList = {"TTToHadronic_2016":[kRed-3], "TTToOthers":[kRed+2], "TTToSemiLeptonic_2016":[kRed],"DYJetsToLL_M-50_HT_2016":[kBlue], "QCD_HT_2016":[kTeal], "WJetsToLNu_2016":[kGreen], "ST_2016":[kYellow], "WW_WZ_ZZ_2016v3":[kOrange]}
 
 print stackList
 #print stackList[2]
@@ -186,13 +186,15 @@ canvas.cd()
 canvas.ResetDrawn()
 
 stack = THStack("hs","stack")
+stack_up = THStack("hs","stack_up")
 #SetOwnership(stack,True)
 histName=argv[1]
 sum_=0
 tree_MC={}
-tree2_MC={}
+tree_MC_up={}
 hist={}
 hist1_={}
+hist1_up={} 
 histo={}
 
 histograms = {
@@ -226,29 +228,30 @@ histograms = {
 }
 
 #sample_names = ["QCD","ST","DYJets","WJets","TTbar"]
-#sample_names = ["TTToSemiLeptonic_2018_2"]
-sample_names = ["DYJetsToLL_M-50_HT_2018", "QCD_HT_2018", "WJetsToLNu_2018", "ST_2018", "WW_WZ_ZZ_2018", "TTToSemiLeptonic_2018","TTTo2L2Nu_2018", "TTToHadronic_2018"]
+#sample_names = ["TTToSemiLeptonic_2016_2"]
+#sample_names = ["DYJetsToLL_M-50_HT_2016", "QCD_HT_2016", "WJetsToLNu_2016", "ST_2016", "WW_WZ_ZZ_2016", "TTToSemiLeptonic_2016","TTTo2L2Nu_2016", "TTToHadronic_2016"]
+sample_names = ["DYJetsToLL_M-50_HT_2016", "QCD_HT_2016", "WJetsToLNu_2016", "ST_2016", "TTToSemiLeptonic_2016","TTToOthers"]
 
 for sample in sample_names:
         	print sample, histName
 		_file[sample] = TFile("%s/uhh2.AnalysisModuleRunner.MC.%s.root"%(_fileDir,sample),"read")
         	print "%s/uhh2.AnalysisModuleRunner.MC.%s.root"%(_fileDir,sample)
-		tree2_MC[sample]=_file[sample].Get("AnalysisTree")
-	        tree2_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal*(ttagN == 1 && wtagN == 0 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
-
-#               tree2_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*1.0*(btagN==0 && wtagN >= 0 && rec_chi2 > 30 && Mttbar < 4000)")
-                hist1_[sample] = tree2_MC[sample].GetHistogram()                
+		tree_MC[sample]=_file[sample].Get("AnalysisTree")
+                tree_MC_up[sample]=_file[sample].Get("AnalysisTree")   
+ 	        tree_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfmu_HighPtID*weight_sfmu_MuonTrigger*weight_pu*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal*(ttagN == 1 && wtagN == 0 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
+                hist1_[sample] = tree_MC[sample].GetHistogram()                
       	  	hist1_[sample].SetFillColor(stackList[sample][0])
         	hist1_[sample].SetLineColor(stackList[sample][0])
 		legendR.AddEntry(hist1_[sample],sample,'f')       
         	hist1_[sample].SetYTitle(histograms[histName][1])        
-#                    for j in range(hist1_[sample].GetNbinsX()+1):
-#	 	    	hist1_[sample].SetBinError(j,hist1_[sample].GetBinError(j)*300)	
-#		    stack.Add(hist1_[sample],"HIST E2")
                 stack.Add(hist1_[sample])
+                tree_MC_up[sample].Draw("%s>>h3_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfmu_HighPtID_up*weight_sfmu_MuonTrigger_up*weight_pu_up*weight_toptagSF_up_*1.*muonrecSF_up*(ttagN == 1 && wtagN == 0 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
+                hist1_up[sample] = tree_MC_up[sample].GetHistogram()
+                stack_up.Add(hist1_up[sample])
 
 
-_file["Data"] = TFile("%s/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run2018.root"%(_fileDir),"read")
+
+_file["Data"] = TFile("%s/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run2016.root"%(_fileDir),"read")
 print "%s/uhh2.AnalysisModuleRunner.DATA.DATA.root"%(_fileDir)
 
 tree = _file["Data"].Get("AnalysisTree")
@@ -263,14 +266,17 @@ dataHist.SetYTitle(histograms[histName][1])
 dataHist.Draw("pe,x0")
 stack.Draw("HIST,SAME")
 
+syst_up=stack_up.GetStack().Last().Clone("syst_up")
 errorban=stack.GetStack().Last().Clone("errorban")
 errorban.Sumw2()
-errorban.SetLineColor(kBlack)
-errorban.SetFillColor(kBlack)
+errorban.SetLineColor(kGray+2)
+errorban.SetFillColor(kGray+2)
 errorban.SetFillStyle(3245)
 errorban.SetMarkerSize(0)
+
 for jj in range(1,errorban.GetNbinsX() + 1):
-	errorban.SetBinError(jj, errorban.GetBinError(jj)*4)
+	errorban.SetBinError(jj, math.sqrt(errorban.GetBinError(jj)*errorban.GetBinError(jj) + (syst_up.GetBinContent(jj) - errorban.GetBinContent(jj))*(syst_up.GetBinContent(jj) - errorban.GetBinContent(jj))))
+#        print((syst_up.GetBinContent(jj) - errorban.GetBinContent(jj)))
 errorban.Draw("E2,SAME")
 
 oneLine = TF1("oneline","1",-9e9,9e9)
@@ -332,19 +338,12 @@ stack.GetYaxis().SetTitle("Events")
 
 dataHist.Draw("E,X0,SAME")
 
-####
-for zz in range(1,errorban.GetNbinsX() + 1):
-	errorban.SetBinError(zz,errorban.GetBinContent(zz)*0.12 + errorban.GetBinError(zz))
-
-###
-
 errorban.Draw("E2,SAME")
 
 legendR.AddEntry(dataHist, "Data", 'pe')
 
 ratio = dataHist.Clone("temp")
 temp = stack.GetStack().Last().Clone("temp")
-#print temp.GetNbinsX(), ratio.GetNbinsX()
 
 for i_bin in range(1,temp.GetNbinsX()+1):
        	temp.SetBinError(i_bin,0.)
@@ -355,7 +354,6 @@ print ratio.GetNbinsX()
 print ratio
 print ratio.GetNbinsX()
 ratio.SetTitle('')
-
 histName=argv[1]
 ratio.GetXaxis().SetLabelSize(gStyle.GetLabelSize()/(padRatio+padOverlap))
 ratio.GetYaxis().SetLabelSize(gStyle.GetLabelSize()/(padRatio+padOverlap))
@@ -374,13 +372,16 @@ ratio.SetMarkerSize(dataHist.GetMarkerSize())
 ratio.SetLineColor(dataHist.GetLineColor())
 ratio.SetLineWidth(dataHist.GetLineWidth())
 ratio.Draw('e,x0')
-
-####
-for zz in range(1,errorban.GetNbinsX() + 1):
-        errorband.SetBinError(zz,errorban.GetBinContent(zz)*0.12 + errorban.GetBinError(zz))
-###
-
 errorband.Divide(temp)
+
+
+
+for i in range(1, errorband.GetNbinsX() + 1):
+    if(errorban.GetBinContent(i) == 0):
+        errorband.SetBinError(i,0)
+    else:
+        errorband.SetBinError(i, errorban.GetBinError(i)/errorban.GetBinContent(i))
+
 errorband.Draw('e2,same')
 
 

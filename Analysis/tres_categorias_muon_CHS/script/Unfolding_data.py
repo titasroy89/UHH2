@@ -180,6 +180,8 @@ for name in ["pileup","muHLT", "muID","misttag","miswtag","cferr1","cferr2","hf"
 
 print addUp
 print addDown
+addUp[0] = addUp[7]
+addUp[1] = addUp[6]
 c2 = TCanvas("c2", "", 800, 600)
 c2.SetTopMargin(0.08)
 c2.SetRightMargin(0.05)

@@ -792,7 +792,7 @@ void all_unfolding_data(string var_name = "", string var_gen = "", string region
    latex2.SetTextAlign(11);  //align at top
    latex2.DrawLatex(0.9,2.05,"58.8 fb^{-1} (13 TeV)");
 
-   c1->Print("Migration_Matrix.ps");
+   c1->Print("Migration_Matrix.pdf");
 
 
     TH2F *Stability_Matrix = new TH2F("Stability_Matrix","",binnum_gen,bins_gen,binnum_gen,bins_gen);

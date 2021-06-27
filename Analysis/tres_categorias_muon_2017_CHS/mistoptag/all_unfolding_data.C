@@ -12,7 +12,7 @@
 #include "TLegend.h"
 
 
-void all_unfolding_data(float_t top = 1, string year = "2018")
+void all_unfolding_data(float_t top = 1, string year = "2017")
 {
 
     
@@ -41,7 +41,7 @@ void all_unfolding_data(float_t top = 1, string year = "2018")
     TTree *treereco_QCD = (TTree*) chreco_QCD;
  
     TChain *chreco_data = new TChain("AnalysisTree","");
-    chreco_data->Add(Form("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/%s_CHS/muon/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run2018.root/AnalysisTree",year.c_str()));
+    chreco_data->Add(Form("/nfs/dust/cms/user/hugobg/ZPrime_102X/analysis_output/%s_CHS/muon/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run*.root/AnalysisTree",year.c_str()));
     TTree *treereco_data = (TTree*) chreco_data;
 
 

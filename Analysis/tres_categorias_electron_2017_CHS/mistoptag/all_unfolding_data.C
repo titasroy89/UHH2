@@ -80,25 +80,25 @@ void all_unfolding_data(float_t top = 1, string year = "2017")
 
 
     treereco_data->Project("DATA_mSD","Ak8_j1_mSD",Form("%s",selcuts.c_str()));
-    treereco_ttbar->Project("ttbar_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_wjets->Project("wjets_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_ST->Project("ST_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_DY->Project("DY_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_QCD->Project("QCD_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_ttbar->Project("ttbar_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_wjets->Project("wjets_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_ST->Project("ST_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_DY->Project("DY_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_QCD->Project("QCD_mSD","Ak8_j1_mSD",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
 
     treereco_data->Project("DATA_eta","Ak8_j1_eta",Form("%s",selcuts.c_str()));
-    treereco_ttbar->Project("ttbar_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_wjets->Project("wjets_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_ST->Project("ST_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_DY->Project("DY_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_QCD->Project("QCD_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_ttbar->Project("ttbar_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_wjets->Project("wjets_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_ST->Project("ST_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_DY->Project("DY_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_QCD->Project("QCD_eta","Ak8_j1_eta",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
 
     treereco_data->Project("DATA_pt","Ak8_j1_pt",Form("%s",selcuts.c_str()));
-    treereco_ttbar->Project("ttbar_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_wjets->Project("wjets_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_ST->Project("ST_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_DY->Project("DY_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
-    treereco_QCD->Project("QCD_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_ttbar->Project("ttbar_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_wjets->Project("wjets_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_ST->Project("ST_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_DY->Project("DY_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
+    treereco_QCD->Project("QCD_pt","Ak8_j1_pt",Form("%s*weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_*weight_pt_rew*weight_sfelec_Rec",selcuts.c_str()));
 
 
 

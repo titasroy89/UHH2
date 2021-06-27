@@ -61,7 +61,7 @@ if not HasCMSStyle:
 ROOT.gROOT.ForceStyle()
 
 #stackList = { "TTbar":[kRed], "DYJets":[kGreen], "QCD":[kYellow],"WJets":[kBlue], "ST":[kOrange], "Diboson":[kTeal]}
-#stackList = { "TTToSemiLeptonic_2017_2":[kRed]} 
+#stackList = { "TTToSemiLeptonic_2017v2_2":[kRed]} 
 stackList = {"TTToHadronic_2017v2":[kRed-3], "TTToOthers":[kRed+2], "TTToSemiLeptonic_2017v2":[kRed],"DYJetsToLL_M-50_HT_2017v2":[kBlue], "QCD_HT_2017v2":[kTeal], "WJetsToLNu_2017v2":[kGreen], "ST_2017v2":[kYellow], "WW_WZ_ZZ_2017v2":[kOrange]}
 
 print stackList
@@ -198,38 +198,12 @@ hist1_up={}
 histo={}
 
 histograms = {
-              "MET_pt"   : ["missing E_{T} [GeV]", "Events", 10, [50,1500]],
-              "lep1_pt":[ "p_{T}^{#lep} [GeV]", "Events",50, [50, 500]],
-              "Mttbar": ["Mttbar", "Events", 20, [0, 2000]], 
               "Ak8_j1_pt": ["Ak8_j1_pt", "Events", 25, [400,1200]],
               "Ak8_j1_tau32": ["Ak8_j1_tau32", "Events", 20, [0,1]],
               "Ak8_j1_tau21": ["Ak8_j1_tau21", "Events", 20, [0,1]],
               "Ak8_j1_mSD": ["Ak8_j1_mSD", "Events", 35, [0,400]],
-              "rec_chi2": ["rec_chi2", "Events", 20, [0,300]],
-              "N_Ak8": ["N_Ak8", "Events", 5, [0,5]],
-              "N_Ak4": ["N_Ak4", "Events", 10, [0,10]],
-#              "TH_M": ["TH_M", "Events", 40, [20,300]],
-#              "TL_M": ["TL_M", "Events", 40, [20,300]],
-#              "W_tagged_jet":["W_tagged_jet","Events",25,[40,200]], 
-              "DeltaY": ["DeltaY", "Events", 8, [-2,2]], 
-#	      "phi_Ak8Puppijets": ["#phi^{AK8Puppi jets}", "Events", 35, [-3.5, 3.5]], 
-#              "phi_jet": ["#phi^{AK4 jets}", "Events", 35, [-3.5, 3.5]],
-#              "dphi_jet1_MET":["#Delta#phi(jet1, MET)""Events", 40, [0, 4.0]],
-#              "dphi_mu_MET":  ["#Delta#phi(#mu, MET)""Events", 40, [0, 4.0]],            
-#              "st"    : ["S_{T} [GeV]", "Events", 50, [0,5000]],
-#              "deepjetbscore_jet": ["DeepJet b-tag score all AK4 jets", "Events",20, [0, 1]],
-#              "deepjetbscore_jet1": ["DeppJet b-tag score AK4 jet 1}", "Events",20, [0, 1]],
-#              "pt_jet1": ["p_{T}^{jet 1} [GeV]", "Events", 20, [100, 900]],
-#              "pt_jet": ["p_{T}^{jet} [GeV]","Events", 20, [100, 900]],
-#              "pt_mu":[ "p_{T}^{#mu} [GeV]", "Events",50, [50, 500]],
-#              "reliso_mu":[ "#mu rel. Iso", "Events", 20, [0, 0.5]],
-#              "dR_mu_jet":[ "#DeltaR_{min}(#mu, jet)","Events", 60,[ 0, 3]],
-#              "ptrel_mu_jet":["p_{T}^{rel}(#mu1, jet)", "Events",50, [0, 500]],
 }
 
-#sample_names = ["QCD","ST","DYJets","WJets","TTbar"]
-#sample_names = ["TTToSemiLeptonic_2017_2"]
-#sample_names = ["DYJetsToLL_M-50_HT_2017", "QCD_HT_2017", "WJetsToLNu_2017", "ST_2017", "WW_WZ_ZZ_2017", "TTToSemiLeptonic_2017","TTTo2L2Nu_2017", "TTToHadronic_2017"]
 sample_names = ["DYJetsToLL_M-50_HT_2017v2", "QCD_HT_2017v2", "WJetsToLNu_2017v2", "ST_2017v2", "WW_WZ_ZZ_2017v2", "TTToSemiLeptonic_2017v2","TTToOthers"]
 
 for sample in sample_names:
@@ -238,14 +212,14 @@ for sample in sample_names:
         	print "%s/uhh2.AnalysisModuleRunner.MC.%s.root"%(_fileDir,sample)
 		tree_MC[sample]=_file[sample].Get("AnalysisTree")
                 tree_MC_up[sample]=_file[sample].Get("AnalysisTree")   
- 	        tree_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*weight_sfelec_Rec*0.95*(ttagN >= 0 && wtagN >= 0 && btagN>=0 && rec_chi2 < 300 && Mttbar < 10000)")
+	        tree_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfelec_TightID*weight_sfelec_Trigger*weight_pu*weight_pt_rew_nolimit*weight_sfelec_Rec*1.00*( %s && btagN==0 && rec_chi2 > 30)"%(argv[2]))
                 hist1_[sample] = tree_MC[sample].GetHistogram()                
       	  	hist1_[sample].SetFillColor(stackList[sample][0])
         	hist1_[sample].SetLineColor(stackList[sample][0])
 		legendR.AddEntry(hist1_[sample],sample,'f')       
         	hist1_[sample].SetYTitle(histograms[histName][1])        
                 stack.Add(hist1_[sample])
-                tree_MC_up[sample].Draw("%s>>h3_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfelec_TightID_up*weight_sfelec_Trigger_up*weight_pu_up*weight_toptagSF_up_*1.0*weight_sfelec_Rec_up*(ttagN >= 0 && wtagN >= 0 && btagN>=0 && rec_chi2 < 300 && Mttbar < 10000)")
+                tree_MC_up[sample].Draw("%s>>h3_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfelec_TightID_up*weight_sfelec_Trigger*weight_pu_up*weight_toptagSF_up_*1*weight_sfelec_Rec_up*(%s && btagN==0 && rec_chi2 > 30)"%(argv[2]))
                 hist1_up[sample] = tree_MC_up[sample].GetHistogram()
                 stack_up.Add(hist1_up[sample])
 
@@ -255,7 +229,7 @@ _file["Data"] = TFile("%s/uhh2.AnalysisModuleRunner.DATA.DATA_EGamma_Run2017v2.r
 print "%s/uhh2.AnalysisModuleRunner.DATA.DATA.root"%(_fileDir)
 
 tree = _file["Data"].Get("AnalysisTree")
-tree.Draw("%s>>dat_hist(%i,%i,%f)"%(histName,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"(ttagN >= 0 && wtagN >= 0 && btagN>=0 && rec_chi2 < 300 && Mttbar < 10000)")
+tree.Draw("%s>>dat_hist(%i,%i,%f)"%(histName,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"( %s && btagN==0 && rec_chi2 > 30)"%(argv[2]))
 dataHist=tree.GetHistogram()
 print "total:",dataHist.Integral()
 print "bins:",dataHist.GetNbinsX()
@@ -377,7 +351,10 @@ errorband.Divide(temp)
 
 
 for i in range(1, errorband.GetNbinsX() + 1):
-    errorband.SetBinError(i, errorban.GetBinError(i)/errorban.GetBinContent(i))
+    if(errorban.GetBinContent(i) == 0):
+        errorband.SetBinError(i,0)
+    else: 
+        errorband.SetBinError(i, errorban.GetBinError(i)/errorban.GetBinContent(i))
 
 errorband.Draw('e2,same')
 
@@ -392,7 +369,7 @@ histName=argv[1]
 if log:
 	canvasRatio.SaveAs("%s_new_log.pdf"%(histName))
 else:
-	canvasRatio.SaveAs("%s_new.pdf"%(histName))
+	canvasRatio.SaveAs("%s_%s.pdf"%(histName,argv[2][0:4]))
 
 
 

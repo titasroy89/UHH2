@@ -6,7 +6,6 @@ from sys import *
 import numpy
 
 samplelist = {
-#'other':'Variables/'+argv[1]+'/'+argv[1]+'_muon_3cat.root',
 'other':argv[1]+'_muon_3cat.root',
 }
 

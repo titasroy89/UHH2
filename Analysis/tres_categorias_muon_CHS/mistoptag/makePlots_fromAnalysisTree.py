@@ -238,14 +238,14 @@ for sample in sample_names:
         	print "%s/uhh2.AnalysisModuleRunner.MC.%s.root"%(_fileDir,sample)
 		tree_MC[sample]=_file[sample].Get("AnalysisTree")
                 tree_MC_up[sample]=_file[sample].Get("AnalysisTree")   
- 	        tree_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal*(ttagN == 1 && wtagN == 0 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
+ 	        tree_MC[sample].Draw("%s>>h2_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfmu_HighPtID*weight_sfmu_Trigger*weight_pu*weight_toptagSF_*weight_pt_rew*weight_btagdisc_central*muonrecSF_nominal*0.93*(ttagN == 0 && wtagN == 1 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
                 hist1_[sample] = tree_MC[sample].GetHistogram()                
       	  	hist1_[sample].SetFillColor(stackList[sample][0])
         	hist1_[sample].SetLineColor(stackList[sample][0])
 		legendR.AddEntry(hist1_[sample],sample,'f')       
         	hist1_[sample].SetYTitle(histograms[histName][1])        
                 stack.Add(hist1_[sample])
-                tree_MC_up[sample].Draw("%s>>h3_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfmu_HighPtID_up*weight_sfmu_Trigger_up*weight_pu_up*weight_toptagSF_up_*1.05*muonrecSF_up*(ttagN == 1 && wtagN == 0 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
+                tree_MC_up[sample].Draw("%s>>h3_%s(%i,%i,%f)"%(histName,sample,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"weight*weight_sfmu_HighPtID_up*weight_sfmu_Trigger_up*weight_pu_up*weight_toptagSF_up_*0.95*muonrecSF_up*(ttagN == 0 && wtagN == 1 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
                 hist1_up[sample] = tree_MC_up[sample].GetHistogram()
                 stack_up.Add(hist1_up[sample])
 
@@ -255,7 +255,7 @@ _file["Data"] = TFile("%s/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuon_Run2018
 print "%s/uhh2.AnalysisModuleRunner.DATA.DATA.root"%(_fileDir)
 
 tree = _file["Data"].Get("AnalysisTree")
-tree.Draw("%s>>dat_hist(%i,%i,%f)"%(histName,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"(ttagN == 1 && wtagN == 0 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
+tree.Draw("%s>>dat_hist(%i,%i,%f)"%(histName,histograms[histName][2],histograms[histName][3][0],histograms[histName][3][1]),"(ttagN == 0 && wtagN == 1 && btagN>=1 && rec_chi2 < 30 && Mttbar < 4000)")
 dataHist=tree.GetHistogram()
 print "total:",dataHist.Integral()
 print "bins:",dataHist.GetNbinsX()
@@ -377,8 +377,10 @@ errorband.Divide(temp)
 
 
 for i in range(1, errorband.GetNbinsX() + 1):
-    errorband.SetBinError(i, errorban.GetBinError(i)/errorban.GetBinContent(i))
-
+    if(errorban.GetBinContent(i) == 0):
+        errorband.SetBinError(i, 0)
+    else:
+        errorband.SetBinError(i, errorban.GetBinError(i)/errorban.GetBinContent(i)) 
 errorband.Draw('e2,same')
 
 

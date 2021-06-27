@@ -1,8 +1,0 @@
-ttbar_semi	4561\pm2285
-ttbar_others	637\pm333
-singletop	584\pm306
-DATA	5450\pm0
-qcd	22\pm23
-wjets	262\pm182
-vv	3\pm1
-dy	15\pm11
