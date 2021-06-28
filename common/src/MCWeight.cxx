@@ -333,7 +333,7 @@ MCToptaggSF::MCToptaggSF(uhh2::Context & ctx,
   float wgt = 1.;
 
  //2018
-  float mergedTop_nominal_1 = 0.998216957;  float mergedTop_nominal_2 = 0.99866605;  float mergedTop_nominal_3 = 0.98657537;  float mergedTop_nominal_4 = 0.94760686;  float mergedTop_nominal_5 = 0.94760686;
+/*  float mergedTop_nominal_1 = 0.998216957;  float mergedTop_nominal_2 = 0.99866605;  float mergedTop_nominal_3 = 0.98657537;  float mergedTop_nominal_4 = 0.94760686;  float mergedTop_nominal_5 = 0.94760686;
   float mergedTop_up_1 = 1.0100830;  float mergedTop_up_2 = 1.0841380;  float mergedTop_up_3 = 1.0128756;  float mergedTop_up_4 = 0.9817470;  float mergedTop_up_5 = 1.0247426;
   float mergedTop_down_1 = 0.95425612;  float mergedTop_down_2 = 0.97232574;  float mergedTop_down_3 = 0.96027511;  float mergedTop_down_4 = 0.90903896;  float mergedTop_down_5 = 0.87047106;
 
@@ -344,10 +344,10 @@ MCToptaggSF::MCToptaggSF(uhh2::Context & ctx,
   float notmerged_nominal_1 = 1.0812713;  float notmerged_nominal_2 = 1.1675383;  float notmerged_nominal_3 = 1.1273180;  float notmerged_nominal_4 = 1.0532738;  float notmerged_nominal_5 = 1.0532738;
   float notmerged_up_1 = 1.1622297;  float notmerged_up_2 = 1.2429656;  float notmerged_up_3 = 1.2226826;  float notmerged_up_4 = 1.1534973;  float notmerged_up_5 = 1.2537208;
   float notmerged_down_1 = 1.0003129;  float notmerged_down_2 = 1.0921111;  float notmerged_down_3 = 1.0319535;  float notmerged_down_4 = 0.95305032;  float notmerged_down_5 = 0.85282677;
-
+*/
 
   //2017
-/*
+
   float mergedTop_nominal_1 = 0.98674524;  float mergedTop_nominal_2 =  0.96778202;  float mergedTop_nominal_3 = 0.95883101;  float mergedTop_nominal_4 = 0.93953139;  float mergedTop_nominal_5 = 0.93953139;
   float mergedTop_up_1 = 1.0236051;  float mergedTop_up_2 = 0.99399608;  float mergedTop_up_3 = 0.98822927;  float mergedTop_up_4 = 0.98521435;  float mergedTop_up_5 = 1.0308974;
   float mergedTop_down_1 = 0.94988531;  float mergedTop_down_2 = 0.94156790;  float mergedTop_down_3 = 0.92943281;  float mergedTop_down_4 = 0.89384848;  float mergedTop_down_5 = 0.84816551;
@@ -362,7 +362,7 @@ MCToptaggSF::MCToptaggSF(uhh2::Context & ctx,
 
 
   //2016
-
+/*
   float mergedTop_nominal_1 = 0.98623419;  float mergedTop_nominal_2 = 0.96503079;  float mergedTop_nominal_3 = 1.0029691;  float mergedTop_nominal_4 = 1.0236728;  float mergedTop_nominal_5 = 1.0236728;
   float mergedTop_up_1 = 1.0226288;  float mergedTop_up_2 = 0.99043179;  float mergedTop_up_3 = 1.0344294;  float mergedTop_up_4 = 1.0716326;  float mergedTop_up_5 = 1.1195925;
   float mergedTop_down_1 = 0.94983965;  float mergedTop_down_2 = 0.93962979;  float mergedTop_down_3 = 0.97150880;  float mergedTop_down_4 = 0.97571295;  float mergedTop_down_5 = 0.92775309;
@@ -897,16 +897,17 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
       const std::string & elecs_handle_name,
       const std::string & sf_name):
       h_elecs_            (ctx.get_handle<std::vector<Electron>>(elecs_handle_name)),
-      h_HT_weight_	  (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix)),
-      h_HT_weight_up_   (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_up")),
-      h_HT_weight_down_ (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_down")),
+      h_HT_weight_	  (ctx.declare_event_output<float>("weight_HT_" + weight_postfix)),
+      h_HT_weight_up_   (ctx.declare_event_output<float>("weight_HT_" + weight_postfix + "_up")),
+      h_HT_weight_down_ (ctx.declare_event_output<float>("weight_HT_" + weight_postfix + "_down")),
       sys_error_factor_(sys_error_percantage/100.)
       {
+//        bool isMuon = false; bool isElectron = false;
+//        if(ctx.get("channel") == "muon") isMuon = true;
+//        if(ctx.get("channel") == "electron") isElectron = true;
        	auto dataset_type = ctx.get("dataset_type");
         bool is_mc = dataset_type == "MC";
         if (!is_mc) {
-          cout << "Warning: MCElecScaleFactor will not have an effect on "
-          <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
           return;
         }
 
@@ -916,22 +917,22 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
         }
 
 	sf_hist_boosted_.reset((TH2*) sf_file.Get("D_boosted"));
-        sf_hist_semiresolved_.reset((TH2*) sf_file.Get("D_semiresolved"));
-        sf_hist_resolved_.reset((TH2*) sf_file.Get("D_resolved"));
+//        sf_hist_semiresolved_.reset((TH2*) sf_file.Get("D_semiresolved"));
+//        sf_hist_resolved_.reset((TH2*) sf_file.Get("D_resolved"));
 
         if (!sf_hist_boosted_.get()) {
           throw runtime_error("HT scale factor histogram not found in file");
         }
-        if (!sf_hist_semiresolved_.get()) {
-          throw runtime_error("HT scale factor histogram not found in file");
-        }
-        if (!sf_hist_resolved_.get()) {
-          throw runtime_error("HT scale factor histogram not found in file");
-        }
+//        if (!sf_hist_semiresolved_.get()) {
+//          throw runtime_error("HT scale factor histogram not found in file");
+//        }
+//        if (!sf_hist_resolved_.get()) {
+//          throw runtime_error("HT scale factor histogram not found in file");
+//        }
 
 	sf_hist_boosted_->SetDirectory(0);
-        sf_hist_semiresolved_->SetDirectory(0);
-        sf_hist_resolved_->SetDirectory(0);        
+//        sf_hist_semiresolved_->SetDirectory(0);
+//        sf_hist_resolved_->SetDirectory(0);        
 
         sys_direction_ = 0;
         if (sys_uncert == "up") {
@@ -949,10 +950,18 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
           event.set(h_HT_weight_down_,  1.);
           return true;
         }
+
 	const auto & elecs = event.get(h_elecs_);
         vector<Jet>* Ak4jets = event.jets;
+        vector<Muon>* muon = event.muons;
+        vector<Electron>* el = event.electrons;
         int NAk4jets = Ak4jets->size();
-        double HT = event.met->pt();
+        double met = event.met->pt();
+        double pt_lep = 0.;
+        if(muon->size() > 0) pt_lep = event.muons->at(0).pt();
+        if(el->size() > 0) pt_lep = event.electrons->at(0).pt();
+        double HT = met + pt_lep;
+       
         float weight = 1., weight_up = 1., weight_down = 1.;
 
         

@@ -790,7 +790,7 @@ void all_unfolding_data(string var_name = "", string var_gen = "", string region
    TLatex latex2;
    latex2.SetTextSize(0.045);
    latex2.SetTextAlign(11);  //align at top
-   latex2.DrawLatex(0.9,2.05,"58.8 fb^{-1} (13 TeV)");
+   latex2.DrawLatex(0.9,2.05,"36.77 fb^{-1} (13 TeV)");
 
    c1->Print("Migration_Matrix.pdf");
 
@@ -847,7 +847,7 @@ void all_unfolding_data(string var_name = "", string var_gen = "", string region
    TLatex latex4;
    latex4.SetTextSize(0.045);
    latex4.SetTextAlign(11);
-   latex4.DrawLatex(1.1,1.04,"58.8 fb^{-1} (13 TeV)");
+   latex4.DrawLatex(1.1,1.04,"36.77 fb^{-1} (13 TeV)");
 
    cc->Print("PS.pdf");
 

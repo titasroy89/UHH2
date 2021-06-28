@@ -1,0 +1,142 @@
+DEBUG 2021-06-11 16:04:04.970 UTC: 	 CRAB Client version: v3.210601
+DEBUG 2021-06-11 16:04:04.970 UTC: 	 Running on: Linux naf-cms13.desy.de 3.10.0-1160.21.1.el7.x86_64 #1 SMP Tue Mar 16 18:28:22 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-06-11 16:04:04.970 UTC: 	 Executing command: 'checkwrite'
+DEBUG 2021-06-11 16:04:04.970 UTC: 	 Found CRAB cache file /afs/desy.de/user/h/hugobg/.crab3
+DEBUG 2021-06-11 16:04:04.989 UTC: 	 Checking credentials
+DEBUG 2021-06-11 16:04:04.989 UTC: 	 Found proxy file /tmp/x509up_u28025
+DEBUG 2021-06-11 16:04:04.989 UTC: 	 Getting proxy life time left
+DEBUG 2021-06-11 16:04:05.593 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u28025 -timeleft
+ output : 283733
+
+ error: 
+ retcode : 0
+DEBUG 2021-06-11 16:04:06.097 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u28025 -actimeleft
+ output : 283732
+
+ error: 
+ retcode : 0
+DEBUG 2021-06-11 16:04:06.097 UTC: 	 Proxy lifetime 283733 secs is different from voms extension lifetime 283732 secs for proxy: /tmp/x509up_u28025
+DEBUG 2021-06-11 16:04:06.097 UTC: 	 Proxy valid for 78:48:52 hours
+DEBUG 2021-06-11 16:04:06.701 UTC: 	 Executing : 
+ command : env X509_USER_PROXY=/tmp/x509up_u28025 voms-proxy-info -fqan
+ output : /cms/Role=NULL/Capability=NULL
+
+ error: 
+ retcode : 0
+DEBUG 2021-06-11 16:04:06.702 UTC: 	 Command use: checkwrite
+DEBUG 2021-06-11 16:04:06.702 UTC: 	 Options use: ['--site=T2_DE_DESY', '--lfn=/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/']
+DEBUG 2021-06-11 16:04:06.702 UTC: 	 Instance is None
+DEBUG 2021-06-11 16:04:06.702 UTC: 	 Server base url is None
+DEBUG 2021-06-11 16:04:06.702 UTC: 	 Retrieving username ...
+DEBUG 2021-06-11 16:04:06.702 UTC: 	 Retrieving username from CRIC...
+DEBUG 2021-06-11 16:04:08.275 UTC: 	 username is hbecerri
+INFO 2021-06-11 16:04:08.276 UTC: 	 Validating LFN /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/...
+INFO 2021-06-11 16:04:08.276 UTC: 	 LFN /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/ is valid.
+INFO 2021-06-11 16:04:08.370 UTC: 	 Will use `gfal-copy`, `gfal-rm` commands for checking write permissions
+INFO 2021-06-11 16:04:08.373 UTC: 	 Will check write permission in /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/ on site T2_DE_DESY
+INFO 2021-06-11 16:04:17.496 UTC: 	 Will use PFN: srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210611_180408/crab3checkwrite_20210611_180408.tmp
+INFO 2021-06-11 16:04:17.496 UTC: 	 
+Attempting to create (dummy) directory crab3checkwrite_20210611_180408 and copy (dummy) file crab3checkwrite_20210611_180408.tmp to /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/
+
+INFO 2021-06-11 16:04:17.500 UTC: 	 Executing command: which scram >/dev/null 2>&1 && eval `scram unsetenv -sh`; gfal-copy -p -v -t 180 file:///nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/scripts/crab/crab3checkwrite_20210611_180408.tmp 'srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210611_180408/crab3checkwrite_20210611_180408.tmp'
+INFO 2021-06-11 16:04:17.500 UTC: 	 Please wait...
+INFO 2021-06-11 16:04:19.788 UTC: 	 
+Successfully created directory crab3checkwrite_20210611_180408 and copied file crab3checkwrite_20210611_180408.tmp to /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/
+INFO 2021-06-11 16:04:19.788 UTC: 	 
+Attempting to delete file srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210611_180408/crab3checkwrite_20210611_180408.tmp
+
+INFO 2021-06-11 16:04:19.788 UTC: 	 Executing command: which scram >/dev/null 2>&1 && eval `scram unsetenv -sh`; gfal-rm -v -t 180 'srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210611_180408/crab3checkwrite_20210611_180408.tmp'
+INFO 2021-06-11 16:04:19.788 UTC: 	 Please wait...
+INFO 2021-06-11 16:04:20.051 UTC: 	 
+Successfully deleted file srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210611_180408/crab3checkwrite_20210611_180408.tmp
+INFO 2021-06-11 16:04:20.051 UTC: 	 
+Attempting to delete directory srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210611_180408/
+
+INFO 2021-06-11 16:04:20.051 UTC: 	 Executing command: which scram >/dev/null 2>&1 && eval `scram unsetenv -sh`; gfal-rm -r -v -t 180 'srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210611_180408/'
+INFO 2021-06-11 16:04:20.051 UTC: 	 Please wait...
+INFO 2021-06-11 16:04:20.419 UTC: 	 
+Successfully deleted directory srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210611_180408/
+INFO 2021-06-11 16:04:20.420 UTC: 	 
+Checkwrite Result:
+INFO 2021-06-11 16:04:20.421 UTC: 	 Success: Able to write in /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/ on site T2_DE_DESY
+DEBUG 2021-06-11 18:42:41.350 UTC: 	 CRAB Client version: v3.210601
+DEBUG 2021-06-11 18:42:41.351 UTC: 	 Running on: Linux naf-cms13.desy.de 3.10.0-1160.21.1.el7.x86_64 #1 SMP Tue Mar 16 18:28:22 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-06-11 18:42:41.351 UTC: 	 Executing command: 'submit'
+DEBUG 2021-06-11 18:42:41.351 UTC: 	 Found CRAB cache file /afs/desy.de/user/h/hugobg/.crab3
+DEBUG 2021-06-11 18:42:41.352 UTC: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+DEBUG 2021-06-11 21:01:23.957 UTC: 	 CRAB Client version: v3.210601
+DEBUG 2021-06-11 21:01:23.958 UTC: 	 Running on: Linux naf-cms15.desy.de 3.10.0-1160.25.1.el7.x86_64 #1 SMP Wed Apr 28 21:49:45 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-06-11 21:01:23.958 UTC: 	 Executing command: 'status'
+DEBUG 2021-06-11 21:01:23.958 UTC: 	 Found CRAB cache file /afs/desy.de/user/h/hugobg/.crab3
+DEBUG 2021-06-11 22:24:06.612 UTC: 	 CRAB Client version: v3.210601
+DEBUG 2021-06-11 22:24:06.612 UTC: 	 Running on: Linux naf-cms15.desy.de 3.10.0-1160.25.1.el7.x86_64 #1 SMP Wed Apr 28 21:49:45 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-06-11 22:24:06.612 UTC: 	 Executing command: 'checkwrite'
+DEBUG 2021-06-11 22:24:06.613 UTC: 	 Found CRAB cache file /afs/desy.de/user/h/hugobg/.crab3
+DEBUG 2021-06-11 22:24:06.618 UTC: 	 Checking credentials
+DEBUG 2021-06-11 22:24:06.618 UTC: 	 Found proxy file /tmp/x509up_u28025
+DEBUG 2021-06-11 22:24:06.618 UTC: 	 Getting proxy life time left
+DEBUG 2021-06-11 22:24:07.122 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u28025 -timeleft
+ output : 282902
+
+ error: 
+ retcode : 0
+DEBUG 2021-06-11 22:24:07.626 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u28025 -actimeleft
+ output : 282902
+
+ error: 
+ retcode : 0
+DEBUG 2021-06-11 22:24:07.626 UTC: 	 Proxy valid for 78:35:02 hours
+DEBUG 2021-06-11 22:24:08.130 UTC: 	 Executing : 
+ command : env X509_USER_PROXY=/tmp/x509up_u28025 voms-proxy-info -fqan
+ output : /cms/Role=NULL/Capability=NULL
+
+ error: 
+ retcode : 0
+DEBUG 2021-06-11 22:24:08.131 UTC: 	 Command use: checkwrite
+DEBUG 2021-06-11 22:24:08.131 UTC: 	 Options use: ['--site=T2_DE_DESY', '--lfn=/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/']
+DEBUG 2021-06-11 22:24:08.131 UTC: 	 Instance is None
+DEBUG 2021-06-11 22:24:08.131 UTC: 	 Server base url is None
+DEBUG 2021-06-11 22:24:08.131 UTC: 	 Retrieving username ...
+DEBUG 2021-06-11 22:24:08.131 UTC: 	 Retrieving username from CRIC...
+DEBUG 2021-06-11 22:24:09.325 UTC: 	 username is hbecerri
+INFO 2021-06-11 22:24:09.325 UTC: 	 Validating LFN /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/...
+INFO 2021-06-11 22:24:09.326 UTC: 	 LFN /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/ is valid.
+INFO 2021-06-11 22:24:09.340 UTC: 	 Will use `gfal-copy`, `gfal-rm` commands for checking write permissions
+INFO 2021-06-11 22:24:09.343 UTC: 	 Will check write permission in /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/ on site T2_DE_DESY
+INFO 2021-06-11 22:24:15.076 UTC: 	 Will use PFN: srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210612_002409/crab3checkwrite_20210612_002409.tmp
+INFO 2021-06-11 22:24:15.077 UTC: 	 
+Attempting to create (dummy) directory crab3checkwrite_20210612_002409 and copy (dummy) file crab3checkwrite_20210612_002409.tmp to /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/
+
+INFO 2021-06-11 22:24:15.080 UTC: 	 Executing command: which scram >/dev/null 2>&1 && eval `scram unsetenv -sh`; gfal-copy -p -v -t 180 file:///nfs/dust/cms/user/hugobg/UHH2_v2/CMSSW_10_2_17/src/UHH2/scripts/crab/crab3checkwrite_20210612_002409.tmp 'srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210612_002409/crab3checkwrite_20210612_002409.tmp'
+INFO 2021-06-11 22:24:15.080 UTC: 	 Please wait...
+INFO 2021-06-11 22:24:16.798 UTC: 	 
+Successfully created directory crab3checkwrite_20210612_002409 and copied file crab3checkwrite_20210612_002409.tmp to /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/
+INFO 2021-06-11 22:24:16.798 UTC: 	 
+Attempting to delete file srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210612_002409/crab3checkwrite_20210612_002409.tmp
+
+INFO 2021-06-11 22:24:16.798 UTC: 	 Executing command: which scram >/dev/null 2>&1 && eval `scram unsetenv -sh`; gfal-rm -v -t 180 'srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210612_002409/crab3checkwrite_20210612_002409.tmp'
+INFO 2021-06-11 22:24:16.798 UTC: 	 Please wait...
+INFO 2021-06-11 22:24:17.053 UTC: 	 
+Successfully deleted file srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210612_002409/crab3checkwrite_20210612_002409.tmp
+INFO 2021-06-11 22:24:17.053 UTC: 	 
+Attempting to delete directory srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210612_002409/
+
+INFO 2021-06-11 22:24:17.053 UTC: 	 Executing command: which scram >/dev/null 2>&1 && eval `scram unsetenv -sh`; gfal-rm -r -v -t 180 'srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210612_002409/'
+INFO 2021-06-11 22:24:17.053 UTC: 	 Please wait...
+INFO 2021-06-11 22:24:17.363 UTC: 	 
+Successfully deleted directory srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/crab3checkwrite_20210612_002409/
+INFO 2021-06-11 22:24:17.364 UTC: 	 
+Checkwrite Result:
+INFO 2021-06-11 22:24:17.364 UTC: 	 Success: Able to write in /store/group/uhh/uhh2ntuples/RunII_102X_v2/dummy/ on site T2_DE_DESY
+DEBUG 2021-06-12 13:49:01.958 UTC: 	 CRAB Client version: v3.210601
+DEBUG 2021-06-12 13:49:01.959 UTC: 	 Running on: Linux naf-cms12.desy.de 3.10.0-1160.21.1.el7.x86_64 #1 SMP Tue Mar 16 18:28:22 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-06-12 13:49:01.959 UTC: 	 Executing command: 'status'
+DEBUG 2021-06-12 13:49:01.959 UTC: 	 Found CRAB cache file /afs/desy.de/user/h/hugobg/.crab3
+DEBUG 2021-06-12 13:49:13.877 UTC: 	 CRAB Client version: v3.210601
+DEBUG 2021-06-12 13:49:13.878 UTC: 	 Running on: Linux naf-cms12.desy.de 3.10.0-1160.21.1.el7.x86_64 #1 SMP Tue Mar 16 18:28:22 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2021-06-12 13:49:13.878 UTC: 	 Executing command: 'status'
+DEBUG 2021-06-12 13:49:13.878 UTC: 	 Found CRAB cache file /afs/desy.de/user/h/hugobg/.crab3

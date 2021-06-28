@@ -70,7 +70,10 @@ def get_request_name(dataset_name):
     return modified_name
 
 
-inputDatasets = ['/DYJetsToLL_M-50_HT-*to*_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_*/MINIAODSIM']
+#inputDatasets = ['/DYJetsToLL_M-50_HT-*to*_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_*/MINIAODSIM']
+#inputDatasets = ['/TTToHadronic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM']
+#inputDatasets = ['/TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM']
+inputDatasets = ['/TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM']
 inputDatasets = autocomplete_Datasets(inputDatasets)
 requestNames = [get_request_name(x) for x in inputDatasets]
 
@@ -90,13 +93,14 @@ config.General.transferOutputs = True
 config.General.transferLogs = True
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/ntuplewriter_mc_2018.py')
+config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/ntuplewriter_mc_2016v3.py')
 config.JobType.outputFiles = ["Ntuple.root"]
 config.JobType.maxMemoryMB = 2500
+config.JobType.maxJobRuntimeMin = 2750
 
 config.Data.inputDBS = 'global'
-config.Data.splitting = 'EventAwareLumiBased'
-config.Data.unitsPerJob = 24000
+config.Data.splitting = 'FileBased'
+config.Data.unitsPerJob = 1
 
 # Add subdirectory using year from config filename
 pset = os.path.basename(config.JobType.psetName)
