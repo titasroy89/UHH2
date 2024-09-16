@@ -166,6 +166,13 @@ private:
   uhh2::Event::Handle<float> h_muon_weight_;
   uhh2::Event::Handle<float> h_muon_weight_up_;
   uhh2::Event::Handle<float> h_muon_weight_down_;
+  uhh2::Event::Handle<float> h_muon_weight_stat_;
+  uhh2::Event::Handle<float> h_muon_weight_stat_up_;
+  uhh2::Event::Handle<float> h_muon_weight_stat_down_;
+  uhh2::Event::Handle<float> h_muon_weight_syst_;
+  uhh2::Event::Handle<float> h_muon_weight_syst_up_;
+  uhh2::Event::Handle<float> h_muon_weight_syst_down_;
+  
   float sys_error_factor_;
   float eta_min_, eta_max_, pt_min_, pt_max_;
   int sys_direction_;
@@ -198,6 +205,12 @@ private:
   uhh2::Event::Handle<float> h_muontrk_weight_;
   uhh2::Event::Handle<float> h_muontrk_weight_up_;
   uhh2::Event::Handle<float> h_muontrk_weight_down_;
+  uhh2::Event::Handle<float> h_muontrk_weight_stat_;
+  uhh2::Event::Handle<float> h_muontrk_weight_stat_up_;
+  uhh2::Event::Handle<float> h_muontrk_weight_stat_down_;
+  uhh2::Event::Handle<float> h_muontrk_weight_syst_;
+  uhh2::Event::Handle<float> h_muontrk_weight_syst_up_;
+  uhh2::Event::Handle<float> h_muontrk_weight_syst_down_;
   float sys_error_factor_;
   float eta_min_, eta_max_;
   int sys_direction_;

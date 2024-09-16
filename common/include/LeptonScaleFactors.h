@@ -151,6 +151,52 @@ private:
   std::vector<uhh2::Event::Handle<float>> fWeightHandles;
   std::unique_ptr<YearSwitcher> fYearSwitcher;
 };
+//------------Muon ID stat-----------------
+class MuonIdScaleFactors_stat: public uhh2::AnalysisModule {
+public:
+  MuonIdScaleFactors_stat(
+    uhh2::Context & ctx,
+    const boost::optional<Muon::Selector> & selectorID = boost::none,
+    const boost::optional<bool> & do_check = boost::none,
+    const boost::optional<std::string> & weight_postfix = boost::none,
+    const boost::optional<std::string> & handle_name = boost::none,
+    const boost::optional<bool> & dummy = boost::none
+  );
+  virtual bool process(uhh2::Event & event) override;
+private:
+  const std::string fSystDirectionConfigName = "SystDirection_MuonId_stat";
+  MuonId fMuonID;
+  const bool fDoCheck;
+  const std::string fWeightPostfix;
+  const std::string fHandleName;
+  const bool fDummy;
+  const uhh2::Event::Handle<std::vector<Muon>> fHandleMuons;
+  std::vector<uhh2::Event::Handle<float>> fWeightHandles;
+  std::unique_ptr<YearSwitcher> fYearSwitcher;
+};
+//------------Muon ID syst-------------------------
+class MuonIdScaleFactors_syst: public uhh2::AnalysisModule {
+public:
+  MuonIdScaleFactors_syst(
+    uhh2::Context & ctx,
+    const boost::optional<Muon::Selector> & selectorID = boost::none,
+    const boost::optional<bool> & do_check = boost::none,
+    const boost::optional<std::string> & weight_postfix = boost::none,
+    const boost::optional<std::string> & handle_name = boost::none,
+    const boost::optional<bool> & dummy = boost::none
+  );
+  virtual bool process(uhh2::Event & event) override;
+private:
+  const std::string fSystDirectionConfigName = "SystDirection_MuonId_syst";
+  MuonId fMuonID;
+  const bool fDoCheck;
+  const std::string fWeightPostfix;
+  const std::string fHandleName;
+  const bool fDummy;
+  const uhh2::Event::Handle<std::vector<Muon>> fHandleMuons;
+  std::vector<uhh2::Event::Handle<float>> fWeightHandles;
+  std::unique_ptr<YearSwitcher> fYearSwitcher;
+};
 
 //____________________________________________________________________________________________________
 class MuonIsoScaleFactors: public uhh2::AnalysisModule {
@@ -176,6 +222,56 @@ private:
   std::vector<uhh2::Event::Handle<float>> fWeightHandles;
   std::unique_ptr<YearSwitcher> fYearSwitcher;
 };
+
+//-----------Muon Iso stat------------------------------------------------
+class MuonIsoScaleFactors_stat: public uhh2::AnalysisModule {
+public:
+  MuonIsoScaleFactors_stat(
+    uhh2::Context & ctx,
+    const boost::optional<Muon::Selector> & selectorISO = boost::none,
+    const boost::optional<Muon::Selector> & selectorID = boost::none,
+    const boost::optional<bool> & do_check = boost::none,
+    const boost::optional<std::string> & weight_postfix = boost::none,
+    const boost::optional<std::string> & handle_name = boost::none,
+    const boost::optional<bool> & dummy = boost::none
+  );
+  virtual bool process(uhh2::Event & event) override;
+private:
+  const std::string fSystDirectionConfigName = "SystDirection_MuonIso_stat";
+  MuonId fMuonID;
+  const bool fDoCheck;
+  const std::string fWeightPostfix;
+  const std::string fHandleName;
+  const bool fDummy;
+  const uhh2::Event::Handle<std::vector<Muon>> fHandleMuons;
+  std::vector<uhh2::Event::Handle<float>> fWeightHandles;
+  std::unique_ptr<YearSwitcher> fYearSwitcher;
+};
+//---------------------Muon Iso syst------------------------------------------------------------
+class MuonIsoScaleFactors_syst: public uhh2::AnalysisModule {
+public:
+  MuonIsoScaleFactors_syst(
+    uhh2::Context & ctx,
+    const boost::optional<Muon::Selector> & selectorISO = boost::none,
+    const boost::optional<Muon::Selector> & selectorID = boost::none,
+    const boost::optional<bool> & do_check = boost::none,
+    const boost::optional<std::string> & weight_postfix = boost::none,
+    const boost::optional<std::string> & handle_name = boost::none,
+    const boost::optional<bool> & dummy = boost::none
+  );
+  virtual bool process(uhh2::Event & event) override;
+private:
+  const std::string fSystDirectionConfigName = "SystDirection_MuonIso_syst";
+  MuonId fMuonID;
+  const bool fDoCheck;
+  const std::string fWeightPostfix;
+  const std::string fHandleName;
+  const bool fDummy;
+  const uhh2::Event::Handle<std::vector<Muon>> fHandleMuons;
+  std::vector<uhh2::Event::Handle<float>> fWeightHandles;
+  std::unique_ptr<YearSwitcher> fYearSwitcher;
+};
+
 
 //____________________________________________________________________________________________________
 // There are official scale factors for the HLT_IsoMu{27,24} et al. trigger combination and the HLT_Mu50 et al. trigger combination. Set the "use_Mu50"
@@ -216,5 +312,63 @@ private:
   std::vector<uhh2::Event::Handle<float>> fWeightHandles;
   std::unique_ptr<YearSwitcher> fYearSwitcher;
 };
+
+class MuonTriggerScaleFactors_stat: public uhh2::AnalysisModule {
+public:
+  MuonTriggerScaleFactors_stat(
+    uhh2::Context & ctx,
+    const boost::optional<bool> & use_Mu50 = boost::none,
+    const boost::optional<bool> & do_check = boost::none,
+    const boost::optional<std::string> & weight_postfix = boost::none,
+    const boost::optional<std::string> & handle_name = boost::none,
+    const boost::optional<bool> & absolute_eta = boost::none,
+    const boost::optional<bool> & dummy = boost::none
+  );
+  virtual bool process(uhh2::Event & event) override;
+private:
+  const std::string fSystDirectionConfigName = "SystDirection_MuonTrigger_stat";
+  const boost::optional<bool> fUseMu50;
+  std::unique_ptr<OrSelection> fTriggerSelection;
+  MuonId fMuonID;
+  const bool fDoCheck;
+  const std::string fWeightPostfix;
+  const std::string fHandleName;
+  const bool fAbsEta;
+  const bool fDummy;
+  const uhh2::Event::Handle<std::vector<Muon>> fHandleMuons;
+  std::vector<uhh2::Event::Handle<float>> fWeightHandles;
+  std::unique_ptr<YearSwitcher> fYearSwitcher;
+};
+
+class MuonTriggerScaleFactors_syst: public uhh2::AnalysisModule {
+public:
+  MuonTriggerScaleFactors_syst(
+    uhh2::Context & ctx,
+    const boost::optional<bool> & use_Mu50 = boost::none,
+    const boost::optional<bool> & do_check = boost::none,
+    const boost::optional<std::string> & weight_postfix = boost::none,
+    const boost::optional<std::string> & handle_name = boost::none,
+    const boost::optional<bool> & absolute_eta = boost::none,
+    const boost::optional<bool> & dummy = boost::none
+  );
+  virtual bool process(uhh2::Event & event) override;
+private:
+  const std::string fSystDirectionConfigName = "SystDirection_MuonTrigger_syst";
+  const boost::optional<bool> fUseMu50;
+  std::unique_ptr<OrSelection> fTriggerSelection;
+  MuonId fMuonID;
+  const bool fDoCheck;
+  const std::string fWeightPostfix;
+  const std::string fHandleName;
+  const bool fAbsEta;
+  const bool fDummy;
+  const uhh2::Event::Handle<std::vector<Muon>> fHandleMuons;
+  std::vector<uhh2::Event::Handle<float>> fWeightHandles;
+  std::unique_ptr<YearSwitcher> fYearSwitcher;
+};
+
+
+
+
 
 }

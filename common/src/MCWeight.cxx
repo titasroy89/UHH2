@@ -391,6 +391,14 @@ MCMuonScaleFactor::MCMuonScaleFactor(
   h_muon_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
   h_muon_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
   h_muon_weight_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_down")),
+  // h_muon_weight_stat_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix+"_stat")),
+  // h_muon_weight_stat_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_stat_up")),
+  // h_muon_weight_stat_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_stat_down")),
+  // h_muon_weight_syst_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix+"_syst")),
+  // h_muon_weight_syst_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_syst_up")),
+  // h_muon_weight_syst_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_syst_down")),
+
+
   sys_error_factor_(sys_error_percantage/100.), etaYaxis_(etaYaxis),
   fAbsoluteEta(absolute_eta)
 {
@@ -416,7 +424,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(
       if (!sf_hist_.get()) {
         sf_hist_.reset((TH2*) sf_file.Get((sf_name).c_str()));
         if (!sf_hist_.get()) {
-          throw runtime_error("Scale factor directory not found in file: " + sf_name);
+          throw runtime_error("Scale factor directory not found in file: " + sf_name + sf_file_path);
         }
       }
     }

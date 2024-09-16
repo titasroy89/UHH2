@@ -19,14 +19,14 @@ from DasQuery import autocomplete_Datasets
 storeJetConstituents = False
 
 inputDatasets = [
-    '/JetHT/Run2016*-HIPM_UL2016_MiniAODv2-v2/MINIAOD',
-    '/JetHT/Run2016*-UL2016_MiniAODv2-v2/MINIAOD',
-    '/JetHT/Run2017*-UL2017_MiniAODv2-v1/MINIAOD',
-    '/JetHT/Run2018*-UL2018_MiniAODv2-v1/MINIAOD',
+#    '/JetHT/Run2016*-HIPM_UL2016_MiniAODv2-v2/MINIAOD',
+#    '/JetHT/Run2016*-UL2016_MiniAODv2-v2/MINIAOD',
+#    '/JetHT/Run2017*-UL2017_MiniAODv2-v1/MINIAOD',
+#    '/JetHT/Run2018*-UL2018_MiniAODv2-v1/MINIAOD',
     '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1/MINIAODSIM',
-    '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1/MINIAODSIM',
-    '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1/MINIAODSIM',
-    '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM',
+   # '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1/MINIAODSIM',
+   # '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1/MINIAODSIM',
+   # '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM',
 ]
 inputDatasets = autocomplete_Datasets(inputDatasets)
 requestNames = [CrabYearUtilities.get_request_name(x) for x in inputDatasets] # Here you can define custom request names if the get_request_names function doesn't return nice ones

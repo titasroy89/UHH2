@@ -69,46 +69,66 @@ def get_year(dataset):
 
     Note that this assumes that we will only run on UL samples, since it heavily relies on the naming scheme of those,
     and will raise exceptions if it can't find a UL-typical year
-    """
-    _,primary_ds_name,processed_ds_name,data_tier_name = tuple(dataset.split('/'))
-    year_string = ''
-
-    year = re.search(r'UL(?:20)?1[678]',processed_ds_name)
-
-    if(year):
-        year_string += year.group(0).replace('20','')
-        if('16' in year.group(0)):
-            if('APV' in processed_ds_name or 'HIPM' in processed_ds_name):
-                year_string += 'preVFP'
-            else:
-                year_string += 'postVFP'
+     """
+    if 'EFT_files' in dataset:
+        # Return a default year for private datasets
+        return 'private'
     else:
-        raise BaseException('Could not extract year from DAS string: %s'%dataset)
+        _,primary_ds_name,processed_ds_name,data_tier_name = tuple(dataset.split('/'))
+        year_string = ''
 
-    return year_string
+        year = re.search(r'UL(?:20)?1[678]',processed_ds_name)
+
+        if(year):
+            year_string += year.group(0).replace('20','')
+            if('16' in year.group(0)):
+                if('APV' in processed_ds_name or 'HIPM' in processed_ds_name):
+                    year_string += 'preVFP'
+                else:
+                    year_string += 'postVFP'
+        else:
+            raise BaseException('Could not extract year from DAS string: %s'%dataset)
+
+        return year_string
+    
 
 def get_ntuplewriter(dataset, jetConstituents=False):
     """Generate the name of the ntuplewriter template that should be used, based on the DAS-string of the dataset"""
+    print("ntuple func 1")
+    # Check if the dataset is a path to a private dataset
+    #if 'EFT_files' in dataset:
+    print("ntuple func 2")
 
-    ntuplewriter_name = 'ntuplewriter_'
+        # If it's a private dataset, set the ntuplewriter name directly
+    ntuplewriter_name = 'ntuplewriter_mc_2018'
+    print("ntuple func 3")
 
-    _,primary_ds_name,processed_ds_name,data_tier_name = tuple(dataset.split('/'))
+    #else:
+        # Handle other cases (DAS datasets)
+     #   dataset_parts = dataset.split('/')
+      #  if len(dataset_parts) >= 4:
+       #     _, primary_ds_name, processed_ds_name, data_tier_name = dataset_parts[:4]
+        #    if data_tier_name == 'MINIAODSIM':
+         #       ntuplewriter_name = 'ntuplewriter_mc_'
+         #   elif data_tier_name == 'MINIAOD':
+          #      ntuplewriter_name = 'ntuplewriter_data_'
+          #  else:
+          #      raise BaseException('Could not extract sample type (MC;DATA) from dataset: %s' % dataset)
+        #else:
+         #   raise BaseException('Unexpected dataset format: %s' % dataset)
 
-    if(data_tier_name == 'MINIAODSIM'):
-        ntuplewriter_name += 'mc_'
-    elif(data_tier_name == 'MINIAOD'):
-        ntuplewriter_name += 'data_'
-    else:
-        raise BaseException('Could not extract sample type (MC;DATA) from DAS string: %s'%dataset)
-
-    ntuplewriter_name += get_year(dataset)
-
-    if(jetConstituents):
+    if jetConstituents:
         ntuplewriter_name += '_leadingjetConstits'
-
+    
     ntuplewriter_name += '.py'
+    print("ntuple func 4")
     return ntuplewriter_name
+    
 
 def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/RunII_106X_v2/'):
     """Build outLFNDirBase from dataset DAS string by adding year dependent subdir to prefix."""
-    return os.path.join(prefix, get_year(dataset))
+    
+    if 'EFT_files' in dataset:
+        return '/nfs/dust/cms/user/titasroy/Ac_UL/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/EFTvsUL/EFT_files/TT01j1lCAv2Ref_HT800/'
+    else:
+        return os.path.join(prefix, get_year(dataset))

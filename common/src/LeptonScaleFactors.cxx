@@ -257,6 +257,260 @@ bool ElectronIdScaleFactors::process(Event & event) {
 }
 
 //____________________________________________________________________________________________________
+MuonIdScaleFactors_stat::MuonIdScaleFactors_stat(
+  Context & ctx,
+  const boost::optional<Muon::Selector> & selectorID,
+  const boost::optional<bool> & do_check,
+  const boost::optional<std::string> & weight_postfix,
+  const boost::optional<std::string> & handle_name,
+  const boost::optional<bool> & dummy
+):
+  fDoCheck(do_check ? *do_check : true),
+  fWeightPostfix(weight_postfix ? *weight_postfix : "id_stat"),
+  fHandleName(handle_name ? *handle_name : "muons"),
+  fDummy(dummy ? *dummy : false),
+  fHandleMuons(ctx.get_handle<vector<Muon>>(fHandleName))
+{ 
+  const string syst_direction = ctx.get(fSystDirectionConfigName, "nominal");
+  if(fDummy) { 
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_up"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_down"));
+  }
+  else if(selectorID) {
+    fMuonID = MuonID(*selectorID);
+    const string base_file_path = (string)getenv("CMSSW_BASE")+"/src/UHH2/"+kBasePathToULMuonSFs;
+    string hist_name = "NUM_";
+    switch(*selectorID) {
+      case Muon::Selector::CutBasedIdGlobalHighPt :
+        hist_name += "HighPtID";
+        break;
+      case Muon::Selector::CutBasedIdLoose :
+        hist_name += "LooseID";
+        break;
+      case Muon::Selector::CutBasedIdMedium :
+        hist_name += "MediumID";
+        break;
+      case Muon::Selector::CutBasedIdMediumPrompt :
+        hist_name += "MediumPromptID";
+        break;
+      case Muon::Selector::SoftCutBasedId :
+        hist_name += "SoftID";
+        break;
+      case Muon::Selector::CutBasedIdTight :
+        hist_name += "TightID";
+        break;
+      case Muon::Selector::CutBasedIdTrkHighPt :
+        hist_name += "TrkHighPtID";
+        break;
+      default :
+        throw invalid_argument("MuonIdScaleFactors: No scale factors implemented for given muon ID");
+    }
+    hist_name += "_DEN_TrackerMuons_abseta_pt";
+    string hist_name_stat = hist_name+"_stat";
+    
+    fYearSwitcher.reset(new YearSwitcher(ctx));
+    fYearSwitcher->setupUL16preVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16preVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root",
+        hist_name_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL16postVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16postVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root",
+        hist_name_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL17(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL17/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root",
+        hist_name_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL18(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL18/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root",
+        hist_name_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+  }
+  else {
+    throw invalid_argument("MuonIdScaleFactors: No muon ID stat provided");
+  }
+}
+bool MuonIdScaleFactors_stat::process(Event & event) {
+  if(fDummy) {
+    for(uint i = 0; i < fWeightHandles.size(); i++) {
+      event.set(fWeightHandles.at(i), -1.);
+    }
+  }
+  else {
+    if(fDoCheck) {
+      for(const Muon & muon : event.get(fHandleMuons)) {
+        if(!fMuonID(muon, event)) throw runtime_error("MuonIdScaleFactors stat::process(): Collection '"+fHandleName+"' contains a muon that does not fulfill the specific ID which scale factors are supposed to be applied for");
+      }
+    }
+    fYearSwitcher->process(event);
+  }
+  return true;
+}
+//------Muon ID syst-----------------------------------------------------------------------------------------------
+MuonIdScaleFactors_syst::MuonIdScaleFactors_syst(
+  Context & ctx,
+  const boost::optional<Muon::Selector> & selectorID,
+  const boost::optional<bool> & do_check,
+  const boost::optional<std::string> & weight_postfix,
+  const boost::optional<std::string> & handle_name,
+  const boost::optional<bool> & dummy
+):
+  fDoCheck(do_check ? *do_check : true),
+  fWeightPostfix(weight_postfix ? *weight_postfix : "id_syst"),
+  fHandleName(handle_name ? *handle_name : "muons"),
+  fDummy(dummy ? *dummy : false),
+  fHandleMuons(ctx.get_handle<vector<Muon>>(fHandleName))
+{ 
+  const string syst_direction = ctx.get(fSystDirectionConfigName, "nominal");
+  if(fDummy) { 
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_up"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_down"));
+  }
+  else if(selectorID) {
+    fMuonID = MuonID(*selectorID);
+    const string base_file_path = (string)getenv("CMSSW_BASE")+"/src/UHH2/"+kBasePathToULMuonSFs;
+    string hist_name = "NUM_";
+    switch(*selectorID) {
+      case Muon::Selector::CutBasedIdGlobalHighPt :
+        hist_name += "HighPtID";
+        break;
+      case Muon::Selector::CutBasedIdLoose :
+        hist_name += "LooseID";
+        break;
+      case Muon::Selector::CutBasedIdMedium :
+        hist_name += "MediumID";
+        break;
+      case Muon::Selector::CutBasedIdMediumPrompt :
+        hist_name += "MediumPromptID";
+        break;
+      case Muon::Selector::SoftCutBasedId :
+        hist_name += "SoftID";
+        break;
+      case Muon::Selector::CutBasedIdTight :
+        hist_name += "TightID";
+        break;
+      case Muon::Selector::CutBasedIdTrkHighPt :
+        hist_name += "TrkHighPtID";
+        break;
+      default :
+        throw invalid_argument("MuonIdScaleFactors: No scale factors implemented for given muon ID");
+    }
+    hist_name += "_DEN_TrackerMuons_abseta_pt";
+    string hist_name_syst = hist_name+"_syst";
+    fYearSwitcher.reset(new YearSwitcher(ctx));
+    fYearSwitcher->setupUL16preVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16preVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root",
+        hist_name_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL16postVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16postVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root",
+        hist_name_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL17(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL17/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root",
+        hist_name_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL18(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL18/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root",
+        hist_name_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+  }
+  else {
+    throw invalid_argument("MuonIdScaleFactors: No muon ID syst provided");
+  }
+}
+bool MuonIdScaleFactors_syst::process(Event & event) {
+  if(fDummy) {
+    for(uint i = 0; i < fWeightHandles.size(); i++) {
+      event.set(fWeightHandles.at(i), -1.);
+    }
+  }
+  else {
+    if(fDoCheck) {
+      for(const Muon & muon : event.get(fHandleMuons)) {
+        if(!fMuonID(muon, event)) throw runtime_error("MuonIdScaleFactors syst::process(): Collection '"+fHandleName+"' contains a muon that does not fulfill the specific ID which scale factors are supposed to be applied for");
+      }
+    }
+    fYearSwitcher->process(event);
+  }
+  return true;
+}
+
+//-------Muon ID nominal-----------------------------------------------------------------------------------------------
 MuonIdScaleFactors::MuonIdScaleFactors(
   Context & ctx,
   const boost::optional<Muon::Selector> & selectorID,
@@ -360,6 +614,7 @@ MuonIdScaleFactors::MuonIdScaleFactors(
         true
       )
     );
+        
   }
   else {
     throw invalid_argument("MuonIdScaleFactors: No muon ID provided");
@@ -376,6 +631,282 @@ bool MuonIdScaleFactors::process(Event & event) {
     if(fDoCheck) {
       for(const Muon & muon : event.get(fHandleMuons)) {
         if(!fMuonID(muon, event)) throw runtime_error("MuonIdScaleFactors::process(): Collection '"+fHandleName+"' contains a muon that does not fulfill the specific ID which scale factors are supposed to be applied for");
+      }
+    }
+    fYearSwitcher->process(event);
+  }
+  return true;
+}
+//Muon Iso Scale Factors stat------------------------------------------------------------
+MuonIsoScaleFactors_stat::MuonIsoScaleFactors_stat(
+  Context & ctx,
+  const boost::optional<Muon::Selector> & selectorISO,
+  const boost::optional<Muon::Selector> & selectorID,
+  const boost::optional<bool> & do_check,
+  const boost::optional<std::string> & weight_postfix,
+  const boost::optional<std::string> & handle_name,
+  const boost::optional<bool> & dummy
+):
+  fDoCheck(do_check ? *do_check : true),
+  fWeightPostfix(weight_postfix ? *weight_postfix : "iso_stat"),
+  fHandleName(handle_name ? *handle_name : "muons"),
+  fDummy(dummy ? *dummy : false),
+  fHandleMuons(ctx.get_handle<vector<Muon>>(fHandleName))
+{
+  const string syst_direction = ctx.get(fSystDirectionConfigName, "nominal");
+  if(fDummy) { // These handle names must match the ones from the MCMuonScaleFactor class!
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_up"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_down"));
+  }
+  else if(selectorISO && selectorID) {
+    fMuonID = AndId<Muon>(MuonID(*selectorISO), MuonID(*selectorID));
+    const string base_file_path = (string)getenv("CMSSW_BASE")+"/src/UHH2/"+kBasePathToULMuonSFs;
+    string hist_name = "NUM_";
+    if(*selectorISO == Muon::Selector::PFIsoLoose && *selectorID == Muon::Selector::CutBasedIdLoose) {
+      hist_name += "LooseRelIso_DEN_LooseID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoLoose && *selectorID == Muon::Selector::CutBasedIdMedium) {
+      hist_name += "LooseRelIso_DEN_MediumID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoLoose && *selectorID == Muon::Selector::CutBasedIdMediumPrompt) {
+      hist_name += "LooseRelIso_DEN_MediumPromptID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoLoose && *selectorID == Muon::Selector::CutBasedIdTight) {
+      hist_name += "LooseRelIso_DEN_TightIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::TkIsoLoose && *selectorID == Muon::Selector::CutBasedIdGlobalHighPt) {
+      hist_name += "LooseRelTkIso_DEN_HighPtIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::TkIsoLoose && *selectorID == Muon::Selector::CutBasedIdTrkHighPt) {
+      hist_name += "LooseRelTkIso_DEN_TrkHighPtIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoTight && *selectorID == Muon::Selector::CutBasedIdMedium) {
+      hist_name += "TightRelIso_DEN_MediumID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoTight && *selectorID == Muon::Selector::CutBasedIdMediumPrompt) {
+      hist_name += "TightRelIso_DEN_MediumPromptID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoTight && *selectorID == Muon::Selector::CutBasedIdTight) {
+      hist_name += "TightRelIso_DEN_TightIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::TkIsoTight && *selectorID == Muon::Selector::CutBasedIdGlobalHighPt) {
+      hist_name += "TightRelTkIso_DEN_HighPtIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::TkIsoTight && *selectorID == Muon::Selector::CutBasedIdTrkHighPt) {
+      hist_name += "TightRelTkIso_DEN_TrkHighPtIDandIPCut";
+    }
+    else {
+      throw invalid_argument("MuonIsoScaleFactors: No scale factors implemented for given combination of muon ID + ISO");
+    }
+    hist_name += "_abseta_pt";
+    string hist_name_stat = hist_name+"_stat";
+    fYearSwitcher.reset(new YearSwitcher(ctx));
+    fYearSwitcher->setupUL16preVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16preVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ISO.root",
+        hist_name_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL16postVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16postVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_ISO.root",
+        hist_name_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL17(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL17/Efficiencies_muon_generalTracks_Z_Run2017_UL_ISO.root",
+        hist_name_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL18(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL18/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root",
+        hist_name_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+  }
+  else {
+    throw invalid_argument("MuonIsoScaleFactors: No muon ISO stat and/or muon ID provided");
+  }
+}
+bool MuonIsoScaleFactors_stat::process(Event & event) {
+  if(fDummy) {
+    for(uint i = 0; i < fWeightHandles.size(); i++) {
+      event.set(fWeightHandles.at(i), -1.);
+    }
+  }
+  else {
+    if(fDoCheck) {
+      for(const Muon & muon : event.get(fHandleMuons)) {
+        if(!fMuonID(muon, event)) throw runtime_error("MuonIsoScaleFactors::process(): Collection '"+fHandleName+"' contains a muon that does not fulfill the specific ISO/ID stat combination which scale factors are supposed to be applied for");
+      }
+    }
+    fYearSwitcher->process(event);
+  }
+  return true;
+}
+// -------------Muon Iso syst---------------------------------
+MuonIsoScaleFactors_syst::MuonIsoScaleFactors_syst(
+  Context & ctx,
+  const boost::optional<Muon::Selector> & selectorISO,
+  const boost::optional<Muon::Selector> & selectorID,
+  const boost::optional<bool> & do_check,
+  const boost::optional<std::string> & weight_postfix,
+  const boost::optional<std::string> & handle_name,
+  const boost::optional<bool> & dummy
+):
+  fDoCheck(do_check ? *do_check : true),
+  fWeightPostfix(weight_postfix ? *weight_postfix : "iso_syst"),
+  fHandleName(handle_name ? *handle_name : "muons"),
+  fDummy(dummy ? *dummy : false),
+  fHandleMuons(ctx.get_handle<vector<Muon>>(fHandleName))
+{
+  const string syst_direction = ctx.get(fSystDirectionConfigName, "nominal");
+  if(fDummy) { // These handle names must match the ones from the MCMuonScaleFactor class!
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_up"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_down"));
+  }
+  else if(selectorISO && selectorID) {
+    fMuonID = AndId<Muon>(MuonID(*selectorISO), MuonID(*selectorID));
+    const string base_file_path = (string)getenv("CMSSW_BASE")+"/src/UHH2/"+kBasePathToULMuonSFs;
+    string hist_name = "NUM_";
+    if(*selectorISO == Muon::Selector::PFIsoLoose && *selectorID == Muon::Selector::CutBasedIdLoose) {
+      hist_name += "LooseRelIso_DEN_LooseID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoLoose && *selectorID == Muon::Selector::CutBasedIdMedium) {
+      hist_name += "LooseRelIso_DEN_MediumID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoLoose && *selectorID == Muon::Selector::CutBasedIdMediumPrompt) {
+      hist_name += "LooseRelIso_DEN_MediumPromptID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoLoose && *selectorID == Muon::Selector::CutBasedIdTight) {
+      hist_name += "LooseRelIso_DEN_TightIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::TkIsoLoose && *selectorID == Muon::Selector::CutBasedIdGlobalHighPt) {
+      hist_name += "LooseRelTkIso_DEN_HighPtIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::TkIsoLoose && *selectorID == Muon::Selector::CutBasedIdTrkHighPt) {
+      hist_name += "LooseRelTkIso_DEN_TrkHighPtIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoTight && *selectorID == Muon::Selector::CutBasedIdMedium) {
+      hist_name += "TightRelIso_DEN_MediumID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoTight && *selectorID == Muon::Selector::CutBasedIdMediumPrompt) {
+      hist_name += "TightRelIso_DEN_MediumPromptID";
+    }
+    else if(*selectorISO == Muon::Selector::PFIsoTight && *selectorID == Muon::Selector::CutBasedIdTight) {
+      hist_name += "TightRelIso_DEN_TightIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::TkIsoTight && *selectorID == Muon::Selector::CutBasedIdGlobalHighPt) {
+      hist_name += "TightRelTkIso_DEN_HighPtIDandIPCut";
+    }
+    else if(*selectorISO == Muon::Selector::TkIsoTight && *selectorID == Muon::Selector::CutBasedIdTrkHighPt) {
+      hist_name += "TightRelTkIso_DEN_TrkHighPtIDandIPCut";
+    }
+    else {
+      throw invalid_argument("MuonIsoScaleFactors: No scale factors implemented for given combination of muon ID + ISO");
+    }
+    hist_name += "_abseta_pt";
+    string hist_name_syst = hist_name+"_syst";
+    fYearSwitcher.reset(new YearSwitcher(ctx));
+    fYearSwitcher->setupUL16preVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16preVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ISO.root",
+        hist_name_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL16postVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16postVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_ISO.root",
+        hist_name_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL17(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL17/Efficiencies_muon_generalTracks_Z_Run2017_UL_ISO.root",
+        hist_name_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+    fYearSwitcher->setupUL18(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL18/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root",
+        hist_name_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        true
+      )
+    );
+  }
+  else {
+    throw invalid_argument("MuonIsoScaleFactors: No muon ISO syst and/or muon ID syst provided");
+  }
+}
+bool MuonIsoScaleFactors_syst::process(Event & event) {
+  if(fDummy) {
+    for(uint i = 0; i < fWeightHandles.size(); i++) {
+      event.set(fWeightHandles.at(i), -1.);
+    }
+  }
+  else {
+    if(fDoCheck) {
+      for(const Muon & muon : event.get(fHandleMuons)) {
+        if(!fMuonID(muon, event)) throw runtime_error("MuonIsoScaleFactors::process(): Collection '"+fHandleName+"' contains a muon that does not fulfill the specific ISO/ID stat combination which scale factors are supposed to be applied for");
       }
     }
     fYearSwitcher->process(event);
@@ -404,6 +935,13 @@ MuonIsoScaleFactors::MuonIsoScaleFactors(
     fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix));
     fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_up"));
     fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_down"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_down"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_stat"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_stat_up"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_stat_down"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_syst"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_syst_up"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_syst_down"));
   }
   else if(selectorISO && selectorID) {
     fMuonID = AndId<Muon>(MuonID(*selectorISO), MuonID(*selectorID));
@@ -498,7 +1036,7 @@ MuonIsoScaleFactors::MuonIsoScaleFactors(
         fHandleName,
         true
       )
-    );
+    );  
   }
   else {
     throw invalid_argument("MuonIsoScaleFactors: No muon ISO and/or muon ID provided");
@@ -521,6 +1059,301 @@ bool MuonIsoScaleFactors::process(Event & event) {
   }
   return true;
 }
+///----------------------Muon Trigger stat----------------------------------------------------------
+MuonTriggerScaleFactors_stat::MuonTriggerScaleFactors_stat(
+  Context & ctx,
+  const boost::optional<bool> & use_Mu50,
+  const boost::optional<bool> & do_check,
+  const boost::optional<std::string> & weight_postfix,
+  const boost::optional<std::string> & handle_name,
+  const boost::optional<bool> & absolute_eta,
+  const boost::optional<bool> & dummy
+):
+  fUseMu50(use_Mu50),
+  fDoCheck(do_check ? *do_check : true),
+  fWeightPostfix(weight_postfix ? *weight_postfix : "trigger_stat"),
+  fHandleName(handle_name ? *handle_name : "muons"),
+  fAbsEta(absolute_eta ? *absolute_eta : false),
+  fDummy(dummy ? *dummy : false),
+  fHandleMuons(ctx.get_handle<vector<Muon>>(fHandleName))
+{
+  const string syst_direction = ctx.get(fSystDirectionConfigName, "nominal");
+  if(fDummy) { // These handle names must match the ones from the MCMuonScaleFactor class!
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_up"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_down"));
+  }
+  else if(fUseMu50) {
+    const string base_file_path = (string)getenv("CMSSW_BASE")+"/src/UHH2/"+kBasePathToULMuonSFs;
+    string hist_name_UL16preVFP;
+    string hist_name_UL16postVFP;
+    string hist_name_UL17;
+    string hist_name_UL18;
+    const string hist_name_extension = fAbsEta ? "_abseta_pt" : "_eta_pt";
+    const Year year = extract_year(ctx);
+    fTriggerSelection.reset(new OrSelection());
+    switch(*fUseMu50) {
+      case true :
+        hist_name_UL16preVFP = "NUM_Mu50_or_TkMu50_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose";
+        hist_name_UL16postVFP = "NUM_Mu50_or_TkMu50_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose";
+        hist_name_UL17 = "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose";
+        hist_name_UL18 = "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose";
+        if(year == Year::isUL16preVFP || year == Year::isUL16postVFP) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_Mu50_v*"));
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_TkMu50_v*"));
+        }
+        else if(year == Year::isUL17 || year == Year::isUL18) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_Mu50_v*"));
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_OldMu100_v*"));
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_TkMu100_v*"));
+        }
+        fMuonID = AndId<Muon>(MuonID(Muon::Selector::CutBasedIdGlobalHighPt), MuonID(Muon::Selector::TkIsoLoose));
+        break;
+      case false :
+        hist_name_UL16preVFP = "NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight";
+        hist_name_UL16postVFP= "NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight";
+        hist_name_UL17 = "NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight";
+        hist_name_UL18 = "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight";
+        if(year == Year::isUL16preVFP || year == Year::isUL16postVFP) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_IsoMu24_v*"));
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_IsoTkMu24_v*"));
+        }
+        else if(year == Year::isUL17) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_IsoMu27_v*"));
+        }
+        else if(year == Year::isUL18) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_IsoMu24_v*"));
+        }
+        fMuonID = AndId<Muon>(MuonID(Muon::Selector::CutBasedIdTight), MuonID(Muon::Selector::PFIsoTight));
+        break;
+    }
+    fYearSwitcher.reset(new YearSwitcher(ctx));
+    string hist_stat=hist_name_UL16preVFP+hist_name_extension+"_stat";
+    fYearSwitcher->setupUL16preVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16preVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_SingleMuonTriggers.root",
+        hist_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        fAbsEta
+      )
+    );
+    fYearSwitcher->setupUL16postVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16postVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_SingleMuonTriggers.root",
+        hist_stat,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        fAbsEta
+      )
+    );
+    string hist_trig_stat17=hist_name_UL17+hist_name_extension+"_stat";
+    fYearSwitcher->setupUL17(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL17/Efficiencies_muon_generalTracks_Z_Run2017_UL_SingleMuonTriggers.root",
+        hist_trig_stat17,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        fAbsEta
+      )
+    );
+    string hist_trig_stat18=hist_name_UL18+hist_name_extension+"_stat";
+    fYearSwitcher->setupUL18(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL18/Efficiencies_muon_generalTracks_Z_Run2018_UL_SingleMuonTriggers.root",
+        hist_trig_stat18,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        fAbsEta
+      )
+    );
+  }
+  else {
+    throw invalid_argument("MuonTriggerScaleFactors stat: Trigger path not specified");
+  }
+}
+
+bool MuonTriggerScaleFactors_stat::process(Event & event) {
+  if(fDummy) {
+    for(uint i = 0; i < fWeightHandles.size(); i++) {
+      event.set(fWeightHandles.at(i), -1.);
+    }
+  }
+  else {
+    if(fDoCheck) {
+      if(!fTriggerSelection->passes(event)) throw runtime_error("MuonTriggerScaleFactors stat::process(): Event does not pass trigger selection which scale factors are supposed to be applied for");
+      for(const Muon & muon : event.get(fHandleMuons)) {
+        if(!fMuonID(muon, event)) throw runtime_error("MuonTriggerScaleFactors stat::process(): Collection '"+fHandleName+"' contains a muon that does not fulfill the ID/ISO combination which the scale factors were derived with");
+      }
+    }
+    fYearSwitcher->process(event);
+  }
+  return true;
+}
+///------------Muon trigger syst--------------------------------------
+MuonTriggerScaleFactors_syst::MuonTriggerScaleFactors_syst(
+  Context & ctx,
+  const boost::optional<bool> & use_Mu50,
+  const boost::optional<bool> & do_check,
+  const boost::optional<std::string> & weight_postfix,
+  const boost::optional<std::string> & handle_name,
+  const boost::optional<bool> & absolute_eta,
+  const boost::optional<bool> & dummy
+):
+  fUseMu50(use_Mu50),
+  fDoCheck(do_check ? *do_check : true),
+  fWeightPostfix(weight_postfix ? *weight_postfix : "trigger_syst"),
+  fHandleName(handle_name ? *handle_name : "muons"),
+  fAbsEta(absolute_eta ? *absolute_eta : false),
+  fDummy(dummy ? *dummy : false),
+  fHandleMuons(ctx.get_handle<vector<Muon>>(fHandleName))
+{
+  const string syst_direction = ctx.get(fSystDirectionConfigName, "nominal");
+  if(fDummy) { // These handle names must match the ones from the MCMuonScaleFactor class!
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_up"));
+    fWeightHandles.push_back(ctx.declare_event_output<float>((string)"weight_sfmu_"+fWeightPostfix+"_down"));
+  }
+  else if(fUseMu50) {
+    const string base_file_path = (string)getenv("CMSSW_BASE")+"/src/UHH2/"+kBasePathToULMuonSFs;
+    string hist_name_UL16preVFP;
+    string hist_name_UL16postVFP;
+    string hist_name_UL17;
+    string hist_name_UL18;
+    const string hist_name_extension = fAbsEta ? "_abseta_pt" : "_eta_pt";
+    const Year year = extract_year(ctx);
+    fTriggerSelection.reset(new OrSelection());
+    switch(*fUseMu50) {
+      case true :
+        hist_name_UL16preVFP = "NUM_Mu50_or_TkMu50_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose";
+        hist_name_UL16postVFP = "NUM_Mu50_or_TkMu50_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose";
+        hist_name_UL17 = "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose";
+        hist_name_UL18 = "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose";
+        if(year == Year::isUL16preVFP || year == Year::isUL16postVFP) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_Mu50_v*"));
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_TkMu50_v*"));
+        }
+        else if(year == Year::isUL17 || year == Year::isUL18) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_Mu50_v*"));
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_OldMu100_v*"));
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_TkMu100_v*"));
+        }
+        fMuonID = AndId<Muon>(MuonID(Muon::Selector::CutBasedIdGlobalHighPt), MuonID(Muon::Selector::TkIsoLoose));
+        break;
+      case false :
+        hist_name_UL16preVFP = "NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight";
+        hist_name_UL16postVFP= "NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight";
+        hist_name_UL17 = "NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight";
+        hist_name_UL18 = "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight";
+        if(year == Year::isUL16preVFP || year == Year::isUL16postVFP) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_IsoMu24_v*"));
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_IsoTkMu24_v*"));
+        }
+        else if(year == Year::isUL17) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_IsoMu27_v*"));
+        }
+        else if(year == Year::isUL18) {
+          fTriggerSelection->add(make_shared<TriggerSelection>("HLT_IsoMu24_v*"));
+        }
+        fMuonID = AndId<Muon>(MuonID(Muon::Selector::CutBasedIdTight), MuonID(Muon::Selector::PFIsoTight));
+        break;
+    }
+    fYearSwitcher.reset(new YearSwitcher(ctx));
+    string hist_syst=hist_name_UL16preVFP+hist_name_extension+"_syst";
+    fYearSwitcher->setupUL16preVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16preVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_SingleMuonTriggers.root",
+        hist_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        fAbsEta
+      )
+    );
+    fYearSwitcher->setupUL16postVFP(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL16postVFP/Efficiencies_muon_generalTracks_Z_Run2016_UL_SingleMuonTriggers.root",
+        hist_syst,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        fAbsEta
+      )
+    );
+    string hist_trig_syst17=hist_name_UL17+hist_name_extension+"_syst";
+    fYearSwitcher->setupUL17(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL17/Efficiencies_muon_generalTracks_Z_Run2017_UL_SingleMuonTriggers.root",
+        hist_trig_syst17,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        fAbsEta
+      )
+    );
+    string hist_trig_syst18=hist_name_UL18+hist_name_extension+"_syst";
+    fYearSwitcher->setupUL18(
+      make_shared<MCMuonScaleFactor>(
+        ctx,
+        base_file_path+"UL18/Efficiencies_muon_generalTracks_Z_Run2018_UL_SingleMuonTriggers.root",
+        hist_trig_syst18,
+        0.0,
+        fWeightPostfix,
+        false,
+        syst_direction,
+        fHandleName,
+        fAbsEta
+      )
+    );
+  }
+  else {
+    throw invalid_argument("MuonTriggerScaleFactors syst: Trigger path not specified");
+  }
+}
+
+bool MuonTriggerScaleFactors_syst::process(Event & event) {
+  if(fDummy) {
+    for(uint i = 0; i < fWeightHandles.size(); i++) {
+      event.set(fWeightHandles.at(i), -1.);
+    }
+  }
+  else {
+    if(fDoCheck) {
+      if(!fTriggerSelection->passes(event)) throw runtime_error("MuonTriggerScaleFactors syst::process(): Event does not pass trigger selection which scale factors are supposed to be applied for");
+      for(const Muon & muon : event.get(fHandleMuons)) {
+        if(!fMuonID(muon, event)) throw runtime_error("MuonTriggerScaleFactors syst::process(): Collection '"+fHandleName+"' contains a muon that does not fulfill the ID/ISO combination which the scale factors were derived with");
+      }
+    }
+    fYearSwitcher->process(event);
+  }
+  return true;
+}
+
 
 //____________________________________________________________________________________________________
 MuonTriggerScaleFactors::MuonTriggerScaleFactors(
@@ -574,7 +1407,7 @@ MuonTriggerScaleFactors::MuonTriggerScaleFactors(
         break;
       case false :
         hist_name_UL16preVFP = "NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight";
-        hist_name_UL16postVFP = "NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight";
+        hist_name_UL16postVFP= "NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight";
         hist_name_UL17 = "NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight";
         hist_name_UL18 = "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight";
         if(year == Year::isUL16preVFP || year == Year::isUL16postVFP) {

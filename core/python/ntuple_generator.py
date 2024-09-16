@@ -1958,7 +1958,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # this is the magic thing by the Egamma POG that does *everything*
     from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
     setupEgammaPostRecoSeq(process, era=egamma_era, runVID=doRunVID, runEnergyCorrections=doRunEnergyCorrections, applyEnergyCorrections=doApplyEnergyCorrections)
-
+    print ("imported the setup")
     el_isovals = []
 
     from UHH2.core.electron_pfMiniIsolation_cff import load_elecPFMiniIso

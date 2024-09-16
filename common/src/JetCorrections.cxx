@@ -580,7 +580,7 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
   } else if (year == Year::isUL16postVFP) {
     version = "Summer20UL16_JRV3";
   } else if (year == Year::isUL17) {
-    version = "Summer19UL17_JRV2";
+    version = "Summer19UL17_JRV3";
   } else if (year == Year::isUL18) {
     version = "Summer19UL18_JRV2";
   } else {
