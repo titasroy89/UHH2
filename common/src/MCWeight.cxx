@@ -1215,7 +1215,7 @@ bool MCBTagDiscriminantReweighting::process(Event & event) {
     if(abs(jet.hadronFlavour()) == 5) jet_flavor = BTagCalib::JetFlavor::FLAV_B;
     else if(abs(jet.hadronFlavour()) == 4) jet_flavor = BTagCalib::JetFlavor::FLAV_C;
 
-    if(jet_pt > 20.0 && fabs(jet_eta) < 2.5) { // UL: b-tagging possible for eta up to 2.5
+    if(jet_pt > 30.0 && fabs(jet_eta) < 2.5) { // UL: b-tagging possible for eta up to 2.5
 
       if(jet_flavor == BTagCalib::JetFlavor::FLAV_C) {
         // For c jets, no dedicated JES SFs are available and the "central" SF is always used for the "central" weight.
