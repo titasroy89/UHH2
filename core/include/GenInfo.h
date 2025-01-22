@@ -28,6 +28,7 @@ class GenInfo{
   const std::vector<float> & weights() const{return m_weights;}
   //list of weights for systematic variations like PDF and Q^2
   const std::vector<float> & systweights() const{return m_systweights;}
+  const std::vector<float> & EFTweights() const{return m_EFTweights;}
   //max pt-hat of the PU
   float PU_pT_hat_max() const{return m_PU_pT_hat_max;}
 
@@ -47,12 +48,15 @@ class GenInfo{
   float pileup_TrueNumInteractions() const{return m_pileup_TrueNumInteractions;}  
   float originalXWGTUP() const{return m_originalXWGTUP;}
 
+  void add_EFTweight(float x){m_EFTweights.push_back(x);}
   void add_binningValue(float x){m_binningValues.push_back(x);}
   void add_weight(float x){m_weights.push_back(x);}
   void add_systweight(float x){m_systweights.push_back(x);}
+  
   void clear_binningValues(){m_binningValues.clear();}
   void clear_weights(){m_weights.clear();}
   void clear_systweights(){m_systweights.clear();}
+  void clear_EFTweights(){m_EFTweights.clear();}
   void set_alphaQCD(float x){m_alphaQCD=x;}
   void set_alphaQED(float x){m_alphaQED=x;}
   void set_qScale(float x){m_qScale=x;}
@@ -74,7 +78,8 @@ class GenInfo{
   std::vector<float> m_binningValues;
   std::vector<float> m_weights;
   std::vector<float> m_systweights; 
-
+  std::vector<float> m_EFTweights; 
+  
   float m_originalXWGTUP;
   float m_alphaQCD;
   float m_alphaQED;

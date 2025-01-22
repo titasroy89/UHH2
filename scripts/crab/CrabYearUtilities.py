@@ -94,14 +94,29 @@ def get_year(dataset):
 
 def get_ntuplewriter(dataset, jetConstituents=False):
     """Generate the name of the ntuplewriter template that should be used, based on the DAS-string of the dataset"""
-    print("ntuple func 1")
+    #print("ntuple func 1")
     # Check if the dataset is a path to a private dataset
     #if 'EFT_files' in dataset:
-    print("ntuple func 2")
+    #print("ntuple func 2")
 
         # If it's a private dataset, set the ntuplewriter name directly
-    ntuplewriter_name = 'ntuplewriter_mc_2018'
-    print("ntuple func 3")
+    ntuplewriter_name = 'ntuplewriter_'
+    _,primary_ds_name,processed_ds_name,data_tier_name = tuple(dataset.split('/'))
+
+    if(data_tier_name == 'MINIAODSIM'):
+        ntuplewriter_name += 'mc_'
+    elif(data_tier_name == 'MINIAOD'):
+        ntuplewriter_name += 'data_'
+    else:
+        raise BaseException('Could not extract sample type (MC;DATA) from DAS string: %s'%dataset)
+
+    ntuplewriter_name += get_year(dataset)
+
+    if(jetConstituents):
+        ntuplewriter_name += '_leadingjetConstits'
+
+    ntuplewriter_name += '.py'
+    return ntuplewriter_name
 
     #else:
         # Handle other cases (DAS datasets)
@@ -117,12 +132,6 @@ def get_ntuplewriter(dataset, jetConstituents=False):
         #else:
          #   raise BaseException('Unexpected dataset format: %s' % dataset)
 
-    if jetConstituents:
-        ntuplewriter_name += '_leadingjetConstits'
-    
-    ntuplewriter_name += '.py'
-    print("ntuple func 4")
-    return ntuplewriter_name
     
 
 def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/RunII_106X_v2/'):

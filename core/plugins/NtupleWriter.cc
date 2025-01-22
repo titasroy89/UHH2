@@ -570,6 +570,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     genparticle_token = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genparticle_source"));
     generator_token = consumes<GenEventInfoProduct>( edm::InputTag("generator"));
     lhe_token = consumes<LHEEventProduct> ( edm::InputTag("externalLHEProducer"));
+    // lhe_eftoken = consumes<LHERunInfoProduct> (edm::InputTag("externalLHEProducer"));
     // this one is necessary to read the LHERunInfoProduct:
     consumes<LHERunInfoProduct, edm::InRun>({"externalLHEProducer"});
     pus_token = consumes<std::vector<PileupSummaryInfo> > ( edm::InputTag("slimmedAddPileupInfo"));
@@ -839,6 +840,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   if(doGenInfo && event->genInfo){
     event->genInfo->clear_weights();
     event->genInfo->clear_systweights();
+    event->genInfo->clear_EFTweights();
     event->genInfo->clear_binningValues();
     event->genparticles->clear();
 
@@ -875,6 +877,16 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       event->genInfo->set_pdf_xPDF1(-999);
       event->genInfo->set_pdf_xPDF2(-999);
     }
+    // edm::Handle<LHERunInfoProduct> h_lheRun;
+    // // edm::Run const& iRun;
+    // // edm::InputTag lheRunTag_;
+    // // lheRunTag_(edm::InputTag("externalLHEProducer"));
+    // // iRun.getByLabel(lheRunTag_, h_lheRun);
+
+	  // const auto& lheRun = *(h_lheRun.product());
+    // cout <<" printing eft?"<<endl;
+    // cout <<h_lheRun->weights.size() <<endl;
+    // cout <<lheRun <<endl;
 
     edm::Handle<LHEEventProduct> lhe;
     if(iEvent.getByToken(lhe_token,lhe)){
@@ -883,6 +895,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         event->genInfo->add_systweight(lhe->weights().at(k).wgt);
       }
     }
+
+
+
 
     edm::Handle<std::vector<PileupSummaryInfo> > pus;
     iEvent.getByToken(pus_token, pus);
@@ -1884,7 +1899,7 @@ void NtupleWriter::beginRun(edm::Run const& iRun, edm::EventSetup const&  iSetup
   }
 
   //print the LHE header to get the indices of the various systematic weights given on the sample
-  /*
+  
   edm::Handle<LHERunInfoProduct> run;
   typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
 
@@ -1896,9 +1911,9 @@ void NtupleWriter::beginRun(edm::Run const& iRun, edm::EventSetup const&  iSetup
   std::vector<std::string> lines = iter->lines();
   for (unsigned int iLine = 0; iLine<lines.size(); iLine++) {
   std::cout << lines.at(iLine);
+ }
 }
-}
-*/
+
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------

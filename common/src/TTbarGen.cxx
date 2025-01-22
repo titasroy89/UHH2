@@ -38,10 +38,10 @@ TTbarGen::TTbarGen(const vector<GenParticle> & genparticles, bool throw_on_failu
 		}
 	      }
 	    }
-            if(abs(w->pdgId()) != 24){
-	        if(throw_on_failure) throw runtime_error("TTbarGen: top has no W daughter");
-                return;
-            }
+            // if(abs(w->pdgId()) != 24){ //uncomment line 41 to 44 for ttbar
+	        // if(throw_on_failure) throw runtime_error("TTbarGen: top has no W daughter");
+            //     return;
+            // }
             
             // NOTE: here, we could skip over intermediate W bosons. However,
             // this Pythia8-related problem is now fixed when creating ntuples already,
@@ -299,6 +299,7 @@ GenParticle TTbarGen::Q2() const{
 
 TTbarGenProducer::TTbarGenProducer(uhh2::Context & ctx, const std::string & name, bool throw_on_failure_): throw_on_failure(throw_on_failure_){
     h_ttbargen = ctx.get_handle<TTbarGen>(name);
+    // cout <<name <<endl;
 }
 
 bool TTbarGenProducer::process(Event & event){
