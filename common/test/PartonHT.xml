@@ -4,7 +4,7 @@
    <Library Name="libTestSUHH2common"/>
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
         <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="TestPartonHT" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14-ntuple2-v1/top_wz/MC_WJets_HT200to400_LNu_20x25_774_Ntuple.root" Lumi="0.0"/> 
+            <In FileName="/data/dust/user/ottjoc/gc-output/PHYS14-ntuple2-v1/top_wz/MC_WJets_HT200to400_LNu_20x25_774_Ntuple.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
         </InputData>
             

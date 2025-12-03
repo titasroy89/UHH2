@@ -18,7 +18,7 @@ void compare_hists(){
 
   //Files with Analysis tree, e.g after UHH2 ntuple-writer
   //file1, hist 1
-  TString path1 = "/nfs/dust/cms/user/karavdia/CMSSW_10_2_11/src/UHH2/core/python/";
+  TString path1 = "/data/dust/user/karavdia/CMSSW_10_2_11/src/UHH2/core/python/";
   TString name1 = "Ntuple_tthad2018_NotredoBslimmed_10GeV.root";
   TString gl_label1 = "DeepCSV, jet pt>100GeV (original)";
 
@@ -35,7 +35,7 @@ void compare_hists(){
   // hist1 ->SetMarkerStyle(20);
 
   //file2, hist 2
-  TString path2 = "/nfs/dust/cms/user/karavdia/CMSSW_10_2_11/src/UHH2/core/python/";
+  TString path2 = "/data/dust/user/karavdia/CMSSW_10_2_11/src/UHH2/core/python/";
   TString name2 = "Ntuple_tthad2018_redoBslimmed_10GeV.root";
   TString gl_label2 = "DeepCSV, jet pt>100GeV (redone)";
 

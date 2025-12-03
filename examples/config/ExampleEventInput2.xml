@@ -5,7 +5,7 @@
     <Package Name="examples.par" />
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./tmp/" PostFix="" TargetLumi="1" >
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/data/dust/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
                 <InputData Lumi="92270" NEventsMax="10000" Type="MC" Version="TTbarIn" Cacheable="False">
                     <In FileName="./uhh2.AnalysisModuleRunner.MC.TTbar.root" Lumi="0.0"/>
                     <InputTree Name="AnalysisTree" />

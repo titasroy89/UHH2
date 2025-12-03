@@ -44,7 +44,7 @@
             <Item Name="use_sframe_weight" Value="false" />
 
 	    <!--For data use now the correct PU JSON file to get the PU profile-->
-            <!--Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v2/Lumifile.root" /-->
+            <!--Item Name="lumi_file" Value="/data/dust/user/peiffer/NtupleWriter/Ntuples/RunII_v2/Lumifile.root" /-->
             
             
             

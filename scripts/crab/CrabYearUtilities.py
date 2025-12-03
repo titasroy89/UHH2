@@ -138,6 +138,6 @@ def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/RunII_106X
     """Build outLFNDirBase from dataset DAS string by adding year dependent subdir to prefix."""
     
     if 'EFT_files' in dataset:
-        return '/nfs/dust/cms/user/titasroy/Ac_UL/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/EFTvsUL/EFT_files/TT01j1lCAv2Ref_HT800/'
+        return '/data/dust/user/titasroy/Ac_UL/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/EFTvsUL/EFT_files/TT01j1lCAv2Ref_HT800/'
     else:
         return os.path.join(prefix, get_year(dataset))

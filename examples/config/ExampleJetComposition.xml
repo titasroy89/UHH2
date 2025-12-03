@@ -7,11 +7,11 @@
     <Package Name="SUHH2examples.par" />
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" >  -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/data/dust/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" >  -->
 
         <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetComposition_2018" Cacheable="False">
-    	    <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_4399_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_7091_Ntuple.root" Lumi="0.0"/>
+    	    <In FileName="/data/dust/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_4399_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/data/dust/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_7091_Ntuple.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <!-- uncomment to write tree of selected events, i.e. of those events for which the AnalysisModule::process method  returns true
                 If no OutputTree is given, no events will be written. Please do use "AnalysisTree" as Name. -->

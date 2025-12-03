@@ -73,7 +73,7 @@ def get_user_from_filename(ntuple_filename):
 
     Assumes it comes after .../user/
     e.g. :
-    get_user_from_filename("/nfs/dust/cms/user/robin/UHH2/Ntuple_2016v2.root")
+    get_user_from_filename("/data/dust/user/robin/UHH2/Ntuple_2016v2.root")
     >> robin
 
     Parameters

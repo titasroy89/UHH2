@@ -6,7 +6,7 @@
     <Package Name="examples.par" />
 
     <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/ proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
+    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/data/dust/user/ottjoc/ proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
 
         <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ExampleOutput_2018" Cacheable="False">
             <In FileName="Ntuple.root" Lumi="0.0"/>
